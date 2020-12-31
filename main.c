@@ -4,4 +4,6 @@ int main() {
 	printf("Hello git") ;
 	return 0 ;
 }
-
+int func() {
+	return 0 ;
+}
