@@ -43,9 +43,11 @@ void Supprimer_Adherant(list_adherant* list,int numero);
 void Supprimer_Livre(list_livre* list,int numero);
 void Rechercher_Adherant(list_adherant list,char nom[]);
 void Rechercher_Livre(list_livre list,char categorie[],char titre[]);
-void Ordonner_Categorie(list_livre list);
-void Emprunter(int numero_adherant , int numero_livre); // donner le numero d'adherant  , rechercher par nom le livre
+void Ordonner_Categorie(list_livre* list);
+void Emprunter(int numero_adherant,int numero_livre); // donner le numero d'adherant  , rechercher par nom le livre
 void Afficher_livre_Emprunte(list_livre list);
 void Afficher_adherant_emprunteur(list_livre list); // eliminer la redendance des emprunteurs
 void Rendre_livre(list_livre list,int numero);
 void Menu();
+void Sauvegarder_Adherant(char fichier[] , list_adherant);
+void Sauvegarder_Livre(char fichier[] , list_livre);
