@@ -6,7 +6,7 @@ typdef struct _Adherant {
   char email[30]; 
   char address{30];
   int emprunt;
-}Adherant ;
+}Adherant;
 struct Auteur {
   char nom[14]; 
   char prenom[14];
@@ -23,6 +23,8 @@ typdef struct _livre {
 #############################################
 typedef Adherant* list_adherant;
 typedef Livre * list_livre;
+void Remplir_Adherant();
+void Remplir_Livres();
 list_adherant Charger_Adherant(char fichier[]); // charger le fichier dans une liste chainée
 list_livre Charger_Livres(char fichier[]);
 void Ajouter_Adherant(list_dherant *list);
