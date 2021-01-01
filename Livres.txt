@@ -1,1 +1,16 @@
-
+66 titre66 geo N_auth1 P_auth1 -1
+44 titre44 math N_auth2 P_auth2 -1
+11 titre11 geo N_auth1 P_auth1 -1
+33 titre33 eco N_auth3 P_auth3 -1
+99 titre99 chim N_auth2 P_auth2 -1
+77 titre77 poe N_auth2 P_auth2 -1
+22 titre22 phys N_auth4 P_auth4 -1
+55 titre55 math N_auth2 P_auth2 -1
+60 titre60 geo N_auth1 P_auth1 -1
+40 titre40 math N_auth2 P_auth4 -1
+10 titre10 geo N_auth1 P_auth1 -1
+30 titre30 chim N_auth3 P_auth4 -1
+90 titre90 chim N_auth2 P_auth2 -1
+70 titre70 math N_auth2 P_auth4 -1
+20 titre20 phys N_auth4 P_auth4 -1
+50 titre50 math N_auth2 P_auth2 -1
