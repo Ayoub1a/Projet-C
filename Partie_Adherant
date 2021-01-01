@@ -33,26 +33,18 @@ typedef struct _livre {
   struct donne_livre d;
   struct _livre *next; 
 }Livre;
-
+// Prototypes : 
 typedef Adherant* list_adherant;
 typedef Livre * list_livre;
-void Remplir_Livres(char fichier[]);/done
-void Remplir_Adherant(char fichier[]);/done
-list_livre Charger_Livres(char fichier[]); //done
-list_adherant Charger_Adherant(char fichier[]); //done
-void Ajouter_Livre(list_livre* list); //done
-Livre* Rechercher_Livre(list_livre list,int numero);//done
-void Modifier_Livre(list_livre* list,int numero);//done
-void Supprimer_Livre(list_livre* list,int numero);//done
-Livre Rechercher_Livre_cat(list_livre list,char categorie[],char titre[]);//done
-void Ordonner_Categorie(list_livre* list);//done
-void Emprunter(int numero_adherant,int numero_livre); //donner le numero d'adherant  , rechercher par num le livre
-void Afficher_livres_Empruntes(list_livre list);
-void Rendre_livre(list_livre list,int numero);
-void Sauvegarder_Livres(char fichier[] , list_livre);//done
-void afficherLivre(Livre* L);//done
-
-//##########################################
+void Remplir_Adherant(char fichier[]);
+list_adherant Charger_Adherant(char fichier[]);
+void afficherAdherant(Adherant * A);
+void Ajouter_Adherant(list_adherant* liste);
+Adherant* Rechercher_Adherant(list_adherant list,int numero); 
+Adherant* Rechercher_Adherant(list_adherant list,char nom[]); 
+void Modifier_Adherant(list_adherant * list,int numero);
+void Sauvegarder_Adherant(char fichier[], list_Adherant list);
+void Supprimer_Adherant(list_adherant *list, int numero);
 void main(){
 	Remplir_Adherant("Adhernats.txt");
 	list_Adherant Adherant_liste = Charger_Adherant("Adherants.txt");
@@ -60,8 +52,6 @@ void main(){
 	afficherAdherant(Adherant_liste);
 	Sauvegarder_Livres("Adhrants.txt", Adherant_liste);
 }
-//##########################################
-
 void Remplir_Adherant(char fichier[]){
 	FILE* fadh = fopen(fichier, "a");
 	if(fadh == NULL) exit(0);
@@ -100,7 +90,7 @@ list_adherant Charger_Adherant(char fichier[]){
 	return lvr;
 }
 
-void afficherLivre(Adherant * A){
+void afficherAdherant(Adherant * A){
 	Adherant *tmp;
 	tmp = A;
 	while(tmp !=NULL){

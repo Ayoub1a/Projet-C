@@ -8,7 +8,7 @@ struct donne_adherant {
   int emprunt;
 }
 typdef struct _Adherant {
-  struct donne_adherant;
+  struct donne_adherant don_adh;
   Adherant * next;
 }Adherant;
 struct Auteur {
