@@ -1,32 +1,34 @@
 # Projet-C
 ## Structures
-     struct donne_adherant {
-        int numero; 
-        char nom[14];
-        char prenom[14];
-        char email[30]; 
-        char address{30];
-        int emprunt;
-      }
-      typdef struct _Adherant {
-        struct donne_adherant don_adh;
-        Adherant * next;
-      }Adherant;
-      struct Auteur {
-        char nom[14]; 
-        char prenom[14];
-      }
-      struct donne_livre{
-        int numero;
-        char titre[30];
-        char categorie[12];
-        struct Auteur auteur;
-        int num_adherant; // a intialiser par -1
-      }
-      typdef struct _livre {
-        struct donne_livre ;
-        Livre * next; 
-      }Livre;
+```c
+struct donne_adherant {
+   int numero; 
+   char nom[14];
+   char prenom[14];
+   char email[30]; 
+   char address{30];
+   int emprunt;
+ }
+ typdef struct _Adherant {
+   struct donne_adherant don_adh;
+   Adherant * next;
+ }Adherant;
+ struct Auteur {
+   char nom[14]; 
+   char prenom[14];
+ }
+ struct donne_livre{
+   int numero;
+   char titre[30];
+   char categorie[12];
+   struct Auteur auteur;
+   int num_adherant; // a intialiser par -1
+ }
+ typdef struct _livre {
+   struct donne_livre ;
+   Livre * next; 
+ }Livre;
+```
 ## Prototype
     typedef Adherant* list_adherant;
     typedef Livre * list_livre;
