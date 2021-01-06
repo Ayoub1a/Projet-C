@@ -60,8 +60,8 @@ void Remplir_Adherant(char fichier[]){
         int numero;
         char nom[14];
         char prenom[14];
-        char email[30]; 
-        char address[30]; 
+        char email[30];
+        char address[30];
         int emprunt = 0;
         do{
                 printf("entrez les donnees d' adherant:\n");
@@ -76,7 +76,7 @@ void Remplir_Adherant(char fichier[]){
 
 list_adherant Charger_Adherant(char fichier[]){
         FILE* fadh = fopen(fichier, "r");
-        if(fadh == NULL) exit(0);
+        if(fadh == NULL) {printf("fichier non trouvable.");exit(0);}
         list_adherant ladh = NULL;
         Adherant* prec = NULL;
         rewind(fadh);
@@ -150,9 +150,6 @@ Adherant * Rechercher_Adherant(list_adherant list,char nom[]){
         printf("Adherant non trouvée\n");
         return NULL;
 }
-
-
-
 void Modifier_Adherant(list_adherant * list,int numero){
         Adherant* tmp;
         if(tmp=Rechercher_Adherant_num(*list,numero)){
@@ -161,7 +158,6 @@ void Modifier_Adherant(list_adherant * list,int numero){
                 scanf("%d %s %s %s %s %d",&(tmp->don_adh.numero), tmp->don_adh.nom, tmp->don_adh.prenom, tmp->don_adh.email, tmp->don_adh.address, &(tmp->don_adh.emprunt));
         }
 }
-
 void Supprimer_Adherant(list_adherant *list, int numero){
         if(*list == NULL){
                 printf("liste vide\n");
