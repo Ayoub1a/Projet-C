@@ -1,3 +1,33 @@
+#include <stdio.h>
+struct donne_adherant {
+   int numero; 
+   char nom[14];
+   char prenom[14];
+   char email[30]; 
+   char address{30];
+   int emprunt;
+ }
+ typdef struct _Adherant {
+   struct donne_adherant don_adh;
+   Adherant * next;
+ }Adherant;
+ struct Auteur {
+   char nom[14]; 
+   char prenom[14];
+ }
+ struct donne_livre{
+   int numero;
+   char titre[30];
+   char categorie[12];
+   struct Auteur auteur;
+   int num_adherant; // a intialiser par -1
+ }
+ typdef struct _livre {
+   struct donne_livre d;
+   Livre * next; 
+ }Livre;
+typedef Adherant* list_adherant;
+typedef Livre * list_livre;
 void Emprunter(int numero_adherant,int numero_livre); // donner le numero d'adherant  , rechercher par nom le livre
 void Afficher_livre_Emprunte(list_livre list);
 void Afficher_adherant_emprunteur(list_livre list); // eliminer la redendance des emprunteurs
