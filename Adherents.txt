@@ -1,0 +1,10 @@
+11 nom11 pnom11 mail11 adr11 0
+44 nom44 pnom44 mail44 adr44 0
+33 nom33 pnom33 mail33 adr33 0
+66 nom66 pnom66 mail33 adr66 0
+22 nom22 pnom33 mail55 adr22 0
+55 nom55 pnom11 mail22 adr55 0
+99 nom99 pnom99 mail55 adr99 0
+77 nom77 pnom77 mail77 adr77 0
+88 nom88 pnom88 mail33 adr88 0
+60 nom60 pnom60 mail55 adr60 0
