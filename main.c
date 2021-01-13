@@ -4,10 +4,10 @@
 
 #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
 #define clear() system("clear");
-#define NC "\e[0m"
-#define RED "\e[0;31m"
-#define GRN "\e[0;32m"
-#define CYN "\e[0;36m"
+#define NC   "\e[0m"
+#define RED  "\e[0;31m"
+#define GRN  "\e[0;32m"
+#define CYN  "\e[0;36m"
 #define REDB "\e[41m"
 void color(char a[]) {
 	printf("%s" , a);
@@ -16,49 +16,52 @@ void color(char a[]) {
 
 #if defined(_WIN32) || defined(_WIN64)
 #define clear() system("cls");
-#define RED "color 1"
-#define GRN "color 2"
-#define CYN "color 3"
+#define RED  "color 1"
+#define GRN  "color 2"
+#define CYN  "color 3"
 #define REDB "color 5"
 void color(char a[]) {
 	system(a);
 }
 #endif
-
+typedef Adherent* list_Adherents;
+typedef Livre * list_livres;
 int Menu();
 void Menu_Adherant();
 void Menu_Livres();
 void Menu_Emprunt();
 int main() {
-    Menu();
-	return 0 ;
+	list_livres ma_Liste_lv;
+	list_Adherents ma_liste_adh;
+  Menu(&ma_liste_adh , &ma_liste_lv);
 }
-int Menu() {
-	char c; 
+int Menu(list_Adherants * list_adh,list_livres * list_lv) {
+	char c;
 	do {
 		clear() ;
 		printf("Bonjour !!\n");
-		printf("Choisissez nentre : \n");
+		printf("Choisissez entre : \n");
 		printf("1. Gestion adherant.\n");
 		printf("2. Gestion livres.\n");
 		printf("3. Gestion Emprunt.\n");
+    printf("q. Quitter.\n");
 		c = getchar();
 		//printf("%c" , c);
 		switch(c) {
-			case 49:
+			case '1':
 				Menu_Adherant();
 				break;
-			case 50: 
+			case '2': 
 				Menu_Livres();
 				break;
-			case 51:
+			case '3':
 				Menu_Emprunt();
 				break;
 		}
-	}while(c!=113);
+	}while(c!='q');
 	return 0 ;
 }
-void Menu_Adherant() {
+void Menu_Adherant(list_Adherants * list_adh,list_livres * list_lv) {
 	/*
 void Remplir_Adherent(char fichier[]); //
 list_Adherents Charger_Adherents(char fichier[]); //
@@ -83,20 +86,21 @@ void Supprimer_Adherent(list_Adherents *list_adh, int numero); //
 		printf("7. Modifier Adherant.\n");
 		printf("8. Sauvegarder Adherant.\n");
 		printf("9. Supprimer Adherant.\n");
+    printf("q. Quitter.\n");
 		c = getchar();
 		//printf("%c" , c);
 		switch(c) {
 			case 49:
-				
-				break;
+					break;
 			case 50:
-				break;
+          *list_adh = Charger_Adherents(char fichier[]);
+					break;
 			case 51:
-				break;
+					break;
 		}
 	}while(c!=113);
 }
-void Menu_Livres() {
+void Menu_Livres(list_Adherants * list_adh,list_livres * list_lv) {
 	/*
 void Remplir_Livres(char fichier[]);//done
 list_livres Charger_Livres(char fichier[]); //done
@@ -122,20 +126,29 @@ void afficherListeLivres(Livre* L);//done
 		printf("6. Modifier livre.\n");
 		printf("7. Sauvegarder livre.\n");
 		printf("8. Supprimer livre.\n");
+    printf("9. Ordonner livre.\n");
+    printf("q. Quitter.\n");
 		c = getchar();
 		//printf("%c" , c);
 		switch(c) {
 			case 49:
-				
-				break;
+        	break;
 			case 50:
-				break;
+					break;
 			case 51:
-				break;
+					break;
+      case 51:
+					break;
+      case 51:
+					break;
+      case 51:
+					break;
+      case 51:
+					break;
 		}
 	}while(c!=113);
 }
-void Menu_emprunt() {
+void Menu_emprunt(list_Adherants * list_adh,list_livres * list_lv) {
 	/*
 void Emprunter(int numero_Adherent , int numero_livre ,list_livres * list_lv , list_Adherents *list_adh ); //
 // donner le numero d'Adherent  , rechercher par nom le livre
@@ -153,16 +166,18 @@ void Rendre_livre(list_livres *list_lv ,list_Adherents* list_adh ,int numero_lv)
 		printf("2. Afficher livre emprunte.\n");
 		printf("3. Afficher adherants emprunteur.\n");
 		printf("4. Rendre livre.\n");
+    printf("q. Quitter.\n");
 		c = getchar();
 		//printf("%c" , c);
 		switch(c) {
 			case 49:
-				
-				break;
+					break;
 			case 50:
-				break;
+					break;
 			case 51:
-				break;
+					break;
+      case 52: 
+        	break;
 		}
 	}while(c!=113);
 }
