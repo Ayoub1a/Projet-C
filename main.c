@@ -1,7 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
-void clear(); 
+
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+#define clear() system("clear");
+#define NC "\e[0m"
+#define RED "\e[0;31m"
+#define GRN "\e[0;32m"
+#define CYN "\e[0;36m"
+#define REDB "\e[41m"
+void color(char a[]) {
+	printf("%s" , a);
+}
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+#define clear() system("cls");
+#define RED "color 1"
+#define GRN "color 2"
+#define CYN "color 3"
+#define REDB "color 5"
+void color(char a[]) {
+	system(a);
+}
+#endif
+
 int Menu();
 void Menu_Adherant();
 void Menu_Livres();
@@ -34,15 +57,6 @@ int Menu() {
 		}
 	}while(c!=113);
 	return 0 ;
-}
-void clear(){
-    #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
-        system("clear");
-    #endif
-
-    #if defined(_WIN32) || defined(_WIN64)
-        system("cls");
-    #endif
 }
 void Menu_Adherant() {
 	/*
