@@ -659,13 +659,13 @@ void Menu(list_Adherents * list_adh,list_livres * list_lv) {
                 //printf("%c" , c);
                 switch(c) {
                         case '1':
-                                Menu_Adherant();
+                                Menu_Adherant(list_adh , list_lv);
                                 break;
                         case '2': 
-                                Menu_Livres();
+                                Menu_Livres(list_adh , list_lv);
                                 break;
                         case '3':
-                                Menu_Emprunt();
+                                Menu_Emprunt(list_adh , list_lv);
                                 break;
                         case 'q': 
                                 exit(0);
@@ -762,35 +762,64 @@ void afficherListeLivres(Livre* L);//done
                 printf("Choisissez entre : \n");
                 printf("1. Remplir livre.\n");
                 printf("2. Charger livre.\n");
-                printf("3. Afficher livre.\n");
-                printf("4. Ajouter livre.\n");
-                printf("5. Rechercher livre.\n");
-                printf("6. Modifier livre.\n");
-                printf("7. Sauvegarder livre.\n");
-                printf("8. Supprimer livre.\n");
-    printf("9. Ordonner livre.\n");
-    printf("q. Quitter.\n");
+                printf("3. Ajouter livre.\n");
+                printf("4. Rechercher livre.\n");
+                printf("5. Modifier livre.\n");
+                printf("6. Sauvegarder livre.\n");
+                printf("7. Supprimer livre.\n");
+    		printf("8. Ordonner livre.\n");
+    		printf("q. Quitter.\n");
+		printf("r. Retourner.\n");
                 c = getchar();
                 //printf("%c" , c);
+                char fichier[20];
+                char nom[14];
+		char cat[14];
+                int  numero; 
                 switch(c) {
-                        case 49:
-                break;
-                        case 50:
-                                        break;
-                        case 51:
-                                        break;
+                        case '1':// Remplir Livre
+                                printf("Entrer le nom du fichier: ");
+                                scanf("%s" , fichier);
+                                Remplir_Livres(fichier);
+                                break;
+                        case '2':// Charger Livre
+                                *list_adh = Charger_Livres(fichier);
+                                break;
+                        case '3':// ajouter du Livre ;
+                                Ajouter_Livre(list_lv);
+                                break;
+                        case '4':// rechercher Livre ;
+				printf("Entrer nom categorie: ") ;
+				scanf("%s %s" , nom , cat);
+                                Rechercher_Livre_cat(*list_lv ,cat , nom);
+                                break;
+                        case '5':// Modifier livre
+                                printf("Enter le numero de l'adherant a modifier: ");
+                                scanf("%d" , &numero);
+                                Modifier_Livre(list_lv , numero);
+                                break;
+                        case '6':// Sauvegarder
+                                printf("Entrer le nom du fichier ou a sauvegarder: ");
+                                printf("%s" , fichier);
+                                Sauvegarder_Livres(fichier , *list_lv);
+                                break;
+                        case '7':// Supprimer Livre
+                                printf("Entrer le numero: "); 
+                                scanf("%d" , &numero);
+                                Supprimer_Livre(list_lv ,numero );
+                                break;
+			case '8': //Ordonner la liste des livre
+				Ordonner_Categorie(list_lv);
+				break;
+                        case 'q':// quitter
+                                printf("Au revoir");
+                                exit(0);
+                                break;         
+
                 }
-        }while(c!=113);
+        }while(c!='r');
 }
 void Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv) {
-        /*
-void Emprunter(int numero_Adherent , int numero_livre ,list_livres * list_lv , list_Adherents *list_adh ); //
-// donner le numero d'Adherent  , rechercher par nom le livre
-void Afficher_livres_Empruntes(list_livres list_lv); //
-void Afficher_Adherents_emprunteurs(list_livres list_lv, list_Adherents list_adh);//
-// eliminer la redendance des emprunteurs
-void Rendre_livre(list_livres *list_lv ,list_Adherents* list_adh ,int numero_lv);//
-        */
         char c; 
         do {
                 clear() ;
@@ -800,18 +829,36 @@ void Rendre_livre(list_livres *list_lv ,list_Adherents* list_adh ,int numero_lv)
                 printf("2. Afficher livre emprunte.\n");
                 printf("3. Afficher adherants emprunteur.\n");
                 printf("4. Rendre livre.\n");
-    printf("q. Quitter.\n");
+	        printf("q. Quitter.\n");
+		printf("r. Retourner.\n");
                 c = getchar();
                 //printf("%c" , c);
+                char fichier[20];
+                char nom[14];
+                int  numero; 
                 switch(c) {
-                        case 49:
-                                        break;
-                        case 50:
-                                        break;
-                        case 51:
-                                        break;
-      			case 52: 
-                			break;
+                        case '1':// Remplir Adherants
+				printf("Entrer le numero de l'adherant et du livre:");
+				int numero_liv; 
+				scanf("%d %d" , &numero , &numero_liv);
+                                Emprunter(numero , numero_liv, list_lv , list_adh);
+                                break;
+			case '2':
+				Afficher_livres_Empruntes(*list_lv);
+                                break;
+                        case '3':
+				Afficher_Adherents_emprunteurs(*list_lv , *list_adh);
+                                break;
+                        case '4':
+				printf("Entrer numero du livre: ");
+				scanf("%d" , &numero);
+				Rendre_livre(list_lv  , list_adh , numero);
+                                break;
+                        case 'q':// quitter
+                                printf("Au revoir");
+                                exit(0);
+                                break;         
+
                 }
-        }while(c!=113);
+        }while(c!='r');
 }
