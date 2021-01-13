@@ -74,6 +74,7 @@ void Menu();
 
 //##########################################
 void main(){
+	
 	puts("hello");
 	//Remplir_Livres("Livres.txt");
 	list_livres ma_Liste_lv = Charger_Livres("Livres.txt");
@@ -87,10 +88,10 @@ void main(){
 	//Ordonner_Categorie(&ma_Liste_lv);
 	//afficherListeLivres(ma_Liste_lv);
 	//printf("\n");
-	/*Livre lv = Rechercher_Livre_cat(ma_Liste_lv,"hyjgh","titre8");
+	Livre lv = Rechercher_Livre_cat(ma_Liste_lv,"hyjgh","titre8");
 	lv.next = NULL;
 	afficherListeLivres(&lv);
-	printf("\n");*/
+	printf("\n");
 	//Modifier_Livre(&ma_Liste_lv,222);
 	//afficherListeLivres(ma_Liste_lv);
 	//printf("\n");
@@ -106,11 +107,11 @@ void main(){
 	//afficherAdherent(ma_liste_adh);
 	//puts("\n");
 	//odifier_Adherent(&ma_liste_adh, 3);
-	/*afficherAdherent(ma_liste_adh);
+	afficherAdherent(ma_liste_adh);
 	Adherent *newadh = Rechercher_Adherent(ma_liste_adh,"nom66");
 	newadh->next = NULL;
 	puts("\n");
-	afficherAdherent(newadh);*/
+	afficherAdherent(newadh);
 	//Sauvegarder_Adherent("Adherents_output.txt", ma_liste_adh);
 	Emprunter(66 , 55 , &ma_Liste_lv, &ma_liste_adh );
 	Emprunter(33 , 77 , &ma_Liste_lv, &ma_liste_adh );
@@ -123,8 +124,8 @@ void main(){
 	afficherAdherent(ma_liste_adh);
 	puts("\n");
 	Afficher_livres_Empruntes(ma_Liste_lv);
-	/*puts("\n****************");
-	Afficher_Adherent_emprunteur(ma_Liste_lv, ma_liste_adh);*/
+	puts("\n****************");
+	Afficher_Adherent_emprunteur(ma_Liste_lv, ma_liste_adh);
 	Rendre_livre(&ma_Liste_lv ,&ma_liste_adh ,60);
 	puts("\n********************\n");
 	Afficher_livres_Empruntes(ma_Liste_lv);

@@ -81,40 +81,55 @@ void Supprimer_Adherent(list_Adherents *list_adh, int numero); //
 		printf("Choisissez entre : \n");
 		printf("1. Remplir adherant.\n");
 		printf("2. Charger adherant.\n");
-		printf("3. Afficher Adherant.\n");//
-		printf("4. Ajouter Adherant.\n");
-		printf("5. Rechercher Adherant.\n");
-		printf("6. Modifier Adherant.\n");
-		printf("7. Sauvegarder Adherant.\n");
-		printf("8. Supprimer Adherant.\n");
+		printf("3. Ajouter Adherant.\n");
+		printf("4. Rechercher Adherant.\n");
+		printf("5. Modifier Adherant.\n");
+		printf("6. Sauvegarder Adherant.\n");
+		printf("7. Supprimer Adherant.\n");
     		printf("q. Quitter.\n");
+    		printf("r. Retourner.\n");
 		c = getchar();
 		//printf("%c" , c);
+		char fichier[20];
+		char nom[14];
+		int  numero; 
 		switch(c) {
-			case 49:
-				char fichier[20];
+			case '1':// Remplir Adherants
 				printf("Entrer le nom du fichier: ")
 				scanf("%s" , fichier);
-				Remplir_Adherant(fichier);
+				Remplir_Adherent(fichier);
 				break;
-			case 50:
+			case '2':// Charger Adherants
           			*list_adh = Charger_Adherents(char fichier[]);
 				break;
-			case 51:
-				
+			case '3':// ajouter du Adherant ;
+				Ajouter_Adherent(list_adh);
 				break;
-			case 52:
+			case '4':// rechercher Adherant ;
+				Rechercher_Adherent_nom(*list_adh ,nom);
 				break;
-			case 53:
+			case '5':// Supprimer
+				printf("Enter le numero de l'adherant a modifier: ");
+				scanf("%d" , &numero);
+				Modifier_Adherent(list_adh , numero);
 				break;
-			case 54:
+			case '6':// Sauvegarder
+				printf("Entrer le nom du fichier ou a sauvegarder: ");
+				printf("%s" , fichier);
+				Sauvegarder_Adherents(fichier , *list_adh);
 				break;
-			case 55:
+			case '7':// Supprimer Adherant
+				printf("Entrer le numero: "); 
+				scanf("%d" , &numero);
+				Supprimer_Adherent(list_adh , )
 				break;
-			case 56:
-				break;
+			case 'q':// quitter
+			        printf("Au revoir");
+				exit(0);
+		       		break;	       
+
 		}
-	}while(c!=113);
+	}while(c!='r');
 }
 void Menu_Livres(list_Adherants * list_adh,list_livres * list_lv) {
 	/*
