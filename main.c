@@ -24,8 +24,6 @@ void color(char a[]) {
 	system(a);
 }
 #endif
-typedef Adherent* list_Adherents;
-typedef Livre * list_livres;
 int Menu();
 void Menu_Adherant();
 void Menu_Livres();
@@ -33,7 +31,7 @@ void Menu_Emprunt();
 int main() {
 	list_livres ma_Liste_lv;
 	list_Adherents ma_liste_adh;
-  Menu(&ma_liste_adh , &ma_liste_lv);
+        Menu(&ma_liste_adh , &ma_liste_lv);
 }
 int Menu(list_Adherants * list_adh,list_livres * list_lv) {
 	char c;
@@ -44,7 +42,7 @@ int Menu(list_Adherants * list_adh,list_livres * list_lv) {
 		printf("1. Gestion adherant.\n");
 		printf("2. Gestion livres.\n");
 		printf("3. Gestion Emprunt.\n");
-    printf("q. Quitter.\n");
+    		printf("q. Quitter.\n");
 		c = getchar();
 		//printf("%c" , c);
 		switch(c) {
@@ -57,8 +55,11 @@ int Menu(list_Adherants * list_adh,list_livres * list_lv) {
 			case '3':
 				Menu_Emprunt();
 				break;
+			case 'q': 
+				exit(0);
+				break;
 		}
-	}while(c!='q');
+	}while(1);
 	return 0 ;
 }
 void Menu_Adherant(list_Adherants * list_adh,list_livres * list_lv) {
@@ -80,23 +81,38 @@ void Supprimer_Adherent(list_Adherents *list_adh, int numero); //
 		printf("Choisissez entre : \n");
 		printf("1. Remplir adherant.\n");
 		printf("2. Charger adherant.\n");
-		printf("4. Afficher Adherant.\n");
-		printf("5. Ajouter Adherant.\n");
-		printf("6. Rechercher Adherant.\n");
-		printf("7. Modifier Adherant.\n");
-		printf("8. Sauvegarder Adherant.\n");
-		printf("9. Supprimer Adherant.\n");
-    printf("q. Quitter.\n");
+		printf("3. Afficher Adherant.\n");//
+		printf("4. Ajouter Adherant.\n");
+		printf("5. Rechercher Adherant.\n");
+		printf("6. Modifier Adherant.\n");
+		printf("7. Sauvegarder Adherant.\n");
+		printf("8. Supprimer Adherant.\n");
+    		printf("q. Quitter.\n");
 		c = getchar();
 		//printf("%c" , c);
 		switch(c) {
 			case 49:
-					break;
+				char fichier[20];
+				printf("Entrer le nom du fichier: ")
+				scanf("%s" , fichier);
+				Remplir_Adherant(fichier);
+				break;
 			case 50:
-          *list_adh = Charger_Adherents(char fichier[]);
-					break;
+          			*list_adh = Charger_Adherents(char fichier[]);
+				break;
 			case 51:
-					break;
+				
+				break;
+			case 52:
+				break;
+			case 53:
+				break;
+			case 54:
+				break;
+			case 55:
+				break;
+			case 56:
+				break;
 		}
 	}while(c!=113);
 }
