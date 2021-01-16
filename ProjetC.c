@@ -656,6 +656,7 @@ void Menu(list_Adherents * list_adh,list_livres * list_lv) {
                 printf("3. Gestion Emprunt.\n");
                 printf("q. Quitter.\n");
                 c = getchar();
+		getchar();
                 //printf("%c" , c);
                 switch(c) {
                         case '1':
@@ -700,6 +701,7 @@ void Supprimer_Adherent(list_Adherents *list_adh, int numero); //
                 printf("q. Quitter.\n");
                 printf("r. Retourner.\n");
                 c = getchar();
+		getchar();
                 //printf("%c" , c);
                 char fichier[20];
                 char nom[14];
@@ -771,6 +773,7 @@ void afficherListeLivres(Livre* L);//done
     		printf("q. Quitter.\n");
 		printf("r. Retourner.\n");
                 c = getchar();
+		getchar();
                 //printf("%c" , c);
                 char fichier[20];
                 char nom[14];
@@ -832,6 +835,7 @@ void Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv) {
 	        printf("q. Quitter.\n");
 		printf("r. Retourner.\n");
                 c = getchar();
+		getchar();
                 //printf("%c" , c);
                 char fichier[20];
                 char nom[14];
