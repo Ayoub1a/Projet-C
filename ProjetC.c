@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <string.h>
+#include<signal.h> 
+
+
 #define Malloc(type) (type *)malloc(sizeof(type))
 #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
 #define clear() system("clear");
@@ -15,11 +19,14 @@ void color(char a[]) {
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-#define clear() system("cls");
+#define clear() ;system("cls");
 #define RED  "color 1"
 #define GRN  "color 2"
 #define CYN  "color 3"
 #define REDB "color 5"
+
+
+
 void color(char a[]) {
         system(a);
 }
@@ -60,6 +67,8 @@ typedef struct _livre {
 typedef Adherent* list_Adherents;
 typedef Livre * list_livres;
 
+char message_alert[255];
+
 
 void            Remplir_Livres(char fichier[]);//done
 list_livres     Charger_Livres(char fichier[]); //done
@@ -67,14 +76,17 @@ void            Ajouter_Livre(list_livres* list_lv); //done
 Livre*          Rechercher_Livre_num(list_livres list_lv,int numero);//done
 void            Modifier_Livre(list_livres* list_lv,int numero);//done
 void            Supprimer_Livre(list_livres* list_lv,int numero);//done
-Livre           Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]);
+Livre*           Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]);
 void            Ordonner_Categorie(list_livres* list_lv);//done
 void            Sauvegarder_Livres(char fichier[] , list_livres);//done
 void            afficherListeLivres(Livre* L);//done
+void			afficherLivre(Livre L);
+void 			Interruption();
 
 void            Remplir_Adherent(char fichier[]); //
 list_Adherents  Charger_Adherents(char fichier[]); //
-void            afficherAdherent(Adherent * A); //
+void            afficherListAdherent(Adherent * A); //
+void            afficherAdherent(Adherent A);
 void            Ajouter_Adherent(list_Adherents* list_adh); //
 Adherent*       Rechercher_Adherent_num(list_Adherents list_adh,int numero); //
 Adherent*       Rechercher_Adherent_nom(list_Adherents list_adh,char nom[]);//
@@ -89,12 +101,15 @@ void            Afficher_Adherents_emprunteurs(list_livres list_lv, list_Adheren
 // eliminer la redendance des emprunteurs
 void            Rendre_livre(list_livres *list_lv ,list_Adherents* list_adh ,int numero_lv);//
 void            Menu(list_Adherents * list_adh,list_livres * list_lv);
-void            Menu_Adherant(list_Adherents * list_adh,list_livres * list_lv);
+void            Menu_Adherent(list_Adherents * list_adh,list_livres * list_lv);
 void            Menu_Livres(list_Adherents * list_adh,list_livres * list_lv);
 void            Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv);
 int main() {
-        list_livres ma_liste_lv;
-        list_Adherents ma_liste_adh;
+	strcpy(message_alert, "");
+        list_livres ma_liste_lv = NULL;
+        list_Adherents ma_liste_adh = NULL;
+        ma_liste_lv = Charger_Livres("Livres.txt");
+        ma_liste_adh = Charger_Adherents("Adherents.txt");
         Menu(&ma_liste_adh , &ma_liste_lv);
 	return 0;
 }
@@ -125,19 +140,19 @@ int main() {
 
         //Remplir_Adherent("Adherents.txt");
         list_Adherents ma_liste_adh = Charger_Adherents("Adherents.txt");
-        //afficherAdherent(ma_liste_adh);
+        //afficherListAdherent(ma_liste_adh);
         //Ajouter_Adherent(&ma_liste_adh);
-        //afficherAdherent(ma_liste_adh);
+        //afficherListAdherent(ma_liste_adh);
         //printf("\n");
         //Supprimer_Adherent(&ma_liste_adh, 1);
-        //afficherAdherent(ma_liste_adh);
+        //afficherListAdherent(ma_liste_adh);
         //puts("\n");
         //odifier_Adherent(&ma_liste_adh, 3);
-        afficherAdherent(ma_liste_adh);
+        afficherListAdherent(ma_liste_adh);
         Adherent *newadh = Rechercher_Adherent(ma_liste_adh,"nom66");
         newadh->next = NULL;
         puts("\n");
-        afficherAdherent(newadh);
+        afficherListAdherent(newadh);
         //Sauvegarder_Adherent("Adherents_output.txt", ma_liste_adh);
         Emprunter(66 , 55 , &ma_Liste_lv, &ma_liste_adh );
         Emprunter(33 , 77 , &ma_Liste_lv, &ma_liste_adh );
@@ -147,7 +162,7 @@ int main() {
         Emprunter(44 , 11 , &ma_Liste_lv, &ma_liste_adh );
         afficherListeLivres(ma_Liste_lv);
         puts("\n");
-        afficherAdherent(ma_liste_adh);
+        afficherListAdherent(ma_liste_adh);
         puts("\n");
         Afficher_livres_Empruntes(ma_Liste_lv);
         puts("\n****************");
@@ -157,7 +172,7 @@ int main() {
         Afficher_livres_Empruntes(ma_Liste_lv);
         puts("\n********\n");
         afficherListeLivres(ma_Liste_lv);
-        afficherAdherent(ma_liste_adh);
+        afficherListAdherent(ma_liste_adh);
 
 }*/
 //##########################################
@@ -171,18 +186,19 @@ void Remplir_Livres(char fichier[]){
         /**remplir le fichier des livres manuellement */
         FILE* fLivre = fopen(fichier, "a"); /*ajouter a la fin du fichier*/
         if(fLivre == NULL) exit(0);
-        int numero;
+        int numero = -1;
         char titre[30];
         char categorie[12];
         char nom[14]; 
         char prenom[14];
-        int num_Adherent;
+                printf("entrez les donnees du livre:\n");
+                puts("cliquez ctrl+c pour sortir: ");
+				printf("numero titre categorie nomAuteur prenomAuteur\n");
         do{
-                printf("entrez les donnees du livre:\nnumero titre categorie nomAuteur prenomAuteur numAdherent\n");
-                scanf("%d %s %s %s %s %d", &numero, titre, categorie, nom, prenom, &num_Adherent);
-                fprintf(fLivre, "\n%d %s %s %s %s %d", numero, titre, categorie, nom, prenom, num_Adherent);
-                puts("entrez -1 pour sortir: ");
-                scanf("%d", &numero);
+                numero = -1;
+                signal(2, Interruption);
+				scanf("%d %s %s %s %s", &numero, titre, categorie, nom, prenom);
+                if(numero != -1) fprintf(fLivre, "\n%d %s %s %s %s %d", numero, titre, categorie, nom, prenom, -1); //emprunteur initialise à -1
         }while(numero != -1);
         fclose(fLivre);
 }
@@ -190,7 +206,10 @@ void Remplir_Livres(char fichier[]){
 list_livres Charger_Livres(char fichier[]){
         /**charger la liste des livres a partir d'un fichier*/
         FILE* fLivres = fopen(fichier, "r");
-        if(fLivres == NULL) exit(0);
+        if(fLivres == NULL){
+        	strcpy(message_alert, "fichier livres non trouve");
+        	return;
+		}
         list_livres lvr = NULL; //poiteur sur la debut de la liste
         Livre* prec = NULL;
         rewind(fLivres); //positionner le pointeur du fichier au debut
@@ -203,16 +222,21 @@ list_livres Charger_Livres(char fichier[]){
                 if(lvr == NULL) lvr  = ptLivre; //si lvr est null, ont est entrain de charger le premier livre
         }
         fclose(fLivres);
+        strcpy(message_alert, "liste chargee");
         return lvr;
 }
 
 void afficherListeLivres(Livre* L){ //afficher une liste des livres ligne par ligne
-        Livre *ptLivre;
-        ptLivre = L;
+		Livre *ptLivre;
+		ptLivre = L;
         while(ptLivre !=NULL){
                 printf("%d %s %s %s %s %d\n", ptLivre->don_lv.num_lv, ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut, ptLivre->don_lv.emprunteur);
                 ptLivre = ptLivre->suiv;
         }
+}
+
+void afficherLivre(Livre L){ //afficher une liste des livres ligne par ligne
+    printf("%d %s %s %s %s %d\n", L.don_lv.num_lv, L.don_lv.titre, L.don_lv.categorie, L.don_lv.auteur.nom_aut, L.don_lv.auteur.prenom_aut, L.don_lv.emprunteur);
 }
 
 void Ajouter_Livre(list_livres* list_lv){
@@ -220,7 +244,7 @@ void Ajouter_Livre(list_livres* list_lv){
         Livre *prec, *ptLivre = *list_lv;
         if(ptLivre == NULL){ //si liste est vide
                 ptLivre = (Livre*) malloc(sizeof(Livre));
-                printf("entrez les donnees de la livre:\nnumero titre categorie nomAuteur prenomAuteur numAdherent\n");
+                printf("entrez les donnees du livre:\nnumero titre categorie nomAuteur prenomAuteur\n");
                 scanf("%d %s %s %s %s %d", &(ptLivre->don_lv.num_lv), ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut, &(ptLivre->don_lv.emprunteur));
                 *list_lv = ptLivre;
         }else{ //ajout dans une liste non vide
@@ -229,16 +253,17 @@ void Ajouter_Livre(list_livres* list_lv){
                 }
                 prec = ptLivre; //souvegarder la position precedente pour faire la liaison
                 ptLivre = (Livre*) malloc(sizeof(Livre));
-                printf("entrez les donnees de la livre:\nnumero titre categorie nomAuteur prenomAuteur numAdherent\n");
-                scanf("%d %s %s %s %s %d", &(ptLivre->don_lv.num_lv), ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut, &(ptLivre->don_lv.emprunteur));
-                prec->suiv = ptLivre;
+                printf("entrez les donnees du livre:\nnumero titre categorie nomAuteur prenomAuteur\n");
+                scanf("%d %s %s %s %s", &(ptLivre->don_lv.num_lv), ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut);
+                ptLivre->don_lv.emprunteur = -1;
+				prec->suiv = ptLivre;
         }
 }
 
 Livre* Rechercher_Livre_num(list_livres list_lv,int numero){ //recherche un livre par numero
         if(list_lv == NULL){
-                puts("liste vide\n");
-                return;
+                strcpy(message_alert,"liste des livres est vide");
+                return NULL;
         }
         Livre *ptLivre = list_lv;
         while(ptLivre->suiv != NULL){
@@ -247,12 +272,17 @@ Livre* Rechercher_Livre_num(list_livres list_lv,int numero){ //recherche un livr
                 }
                 ptLivre = ptLivre->suiv;
         }
-        printf("livre non trouve\n");
+        strcpy(message_alert,"livre non trouve");
+        return NULL;
 }
 
 void Modifier_Livre(list_livres* list_lv, int numero){ //modifier les donnees d'un livre dans liste, recherche par nom
         Livre* ptLivre;
-        if(ptLivre=Rechercher_Livre_num(*list_lv,numero)){
+        if(*list_lv == NULL){
+                strcpy(message_alert,"liste des livres est vide");
+                return;
+        }
+        if(ptLivre = Rechercher_Livre_num(*list_lv, numero)){
                 puts("entrez les nouvelle donnees:\nnumero titre categorie nomAuteur prenomAuteur numAdherent\n");
                 scanf("%d %s %s %s %s %d", &(ptLivre->don_lv.num_lv), ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut, &(ptLivre->don_lv.emprunteur));
         }
@@ -264,7 +294,7 @@ void Supprimer_Livre(list_livres* list_lv, int numero){
          * sinon, on fait pointer le precédent sur le suivant en guardant reference sur le courant, et on l'efface après (libèrer l'espace mem).
          * */
         if(*list_lv == NULL){
-                printf("liste vide\n");
+                strcpy(message_alert,"liste des livres est vide");
                 return;
         }else{
                 Livre* ptLivre = *list_lv;
@@ -288,6 +318,10 @@ void Supprimer_Livre(list_livres* list_lv, int numero){
 
 
 void Ordonner_Categorie(list_livres* list_lv){ //tri à bulles par catégorie de la liste des livres
+		if(*list_lv == NULL){
+			strcpy(message_alert,"liste des livres est vide");
+			return;
+		}
         Livre *prec, *courant= *list_lv;
         int size = 0;
         prec = courant;
@@ -344,29 +378,30 @@ void Ordonner_Categorie(list_livres* list_lv){ //tri à bulles par catégorie de
                         i++;
                 }
                 size--;
+                strcpy(message_alert,"liste des livres ordonee");
                 //afficherListeLivres(*list_lv);
                 //puts("______\n");
         }
 }
 
 
-Livre Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]){ //on suppose que la liste des ordonnees est trié par categorie
-        Livre* ptLivre = list_lv;
-        if(ptLivre == NULL){
-                puts("list vide\n");
-                return;
+Livre* Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]){ //on suppose que la liste des ordonnees est trié par categorie
+        if(list_lv == NULL){
+                strcpy(message_alert,"liste des livres est vide");
+                return NULL;
         }
+        Livre* ptLivre = list_lv;
         while(ptLivre->suiv != NULL){
                 if(!strcmp(ptLivre->don_lv.categorie, categorie)){
                         /**comme la liste est trié par catégorie, tout les livres de la meme categorie
                          * sont dans des positions consécutives*/
                         if(!strcmp(ptLivre->don_lv.titre, titre)){
-                                return *ptLivre;
+                                return ptLivre;
                         }else{
                                 ptLivre = ptLivre->suiv;
                                 while(!strcmp(ptLivre->don_lv.categorie, categorie)){
                                         if(!strcmp(ptLivre->don_lv.titre, titre))
-                                                return *ptLivre;
+                                                return ptLivre;
                                         else
                                                 ptLivre = ptLivre->suiv;
                                 }
@@ -374,13 +409,14 @@ Livre Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]){ /
                 }
                 ptLivre = ptLivre->suiv;
         }
-        puts("livre non trouve\n");
+        strcpy(message_alert,"livre non trouve");
+        return NULL;
 }
 
 void Sauvegarder_Livres(char fichier[], list_livres list_lv){ //charger les donnees de la liste dans un fichier
         FILE* fLivre = fopen(fichier, "w+");
         if(list_lv == NULL){
-                puts("liste vide\n");
+                strcpy(message_alert,"liste des livres est vide");
                 return;
         }
         Livre *ptLivre = list_lv;
@@ -394,34 +430,44 @@ void Sauvegarder_Livres(char fichier[], list_livres list_lv){ //charger les donn
         fclose(fLivre);
 }
 
+void Interruption() 
+{
+    return;
+}
+
 //#################################################################  Adherents ################################################################
-void Remplir_Adherent(char fichier[]){ // Remplir les Adherant a du standard  input a un fichier 
+void Remplir_Adherent(char fichier[]){ // Remplir les Adherent a du standard  input a un fichier 
         FILE* fadh = fopen(fichier, "a");
         if(fadh == NULL) exit(0);
-        int numero;
+        int numero=-1;
         char nom[14];
         char prenom[14];
         char email[30]; 
-        char address[30]; 
+        char address[30];
         int emprunt = 0;
+        printf("entrez les donnees d' Adherent :\n");
+        puts("cliquez ctrl+c pour sortir");
+        printf("numero \t nom prenom \t email \t address \t emprunt \n");
         do{
-                printf("entrez les donnees d' Adherent:\n");
-                printf("numero \t nom prenom \t email \t address \t emprunt \n") ;
+        		numero = -1;
+                signal(2, Interruption);
                 scanf("%d %s %s %s %s %d",&numero,nom,prenom,email,address,&emprunt);
-                fprintf(fadh, "\n%d %s %s %s %s %d", numero,nom,prenom,email ,address,emprunt);
-                puts("entrez 0 pour sortir: ");
-                scanf("%d", &numero);
-        }while(numero != 0);
+                if(numero != -1) fprintf(fadh, "\n%d %s %s %s %s %d", numero,nom,prenom,email ,address,emprunt);
+        }while(numero != -1);
         fclose(fadh);
 }
 
 
-list_Adherents Charger_Adherents(char fichier[]){ // charger la liste des adherant 
+
+list_Adherents Charger_Adherents(char fichier[]){ // charger la liste des Adherent 
         /*
          * la listie ladh pointeur sur un liste chainée des adhaerant 
          */
         FILE* fadh = fopen(fichier, "r");
-        if(fadh == NULL) exit(0);
+        if(fadh == NULL){
+        	strcpy(message_alert, "fichier adherents non trouve");
+        	return;
+		}
         list_Adherents ladh = NULL;
         Adherent* prec = NULL;
         rewind(fadh);
@@ -434,10 +480,11 @@ list_Adherents Charger_Adherents(char fichier[]){ // charger la liste des adhera
                 if(ladh == NULL) ladh  = ptAdh;
         }
         fclose(fadh);
+        strcpy(message_alert, "liste charge");
         return ladh;
 }
 
-void afficherAdherent(Adherent * A){ // afichages des adherants 
+void afficherListAdherent(Adherent *A){ // afichages des Adherents 
         Adherent *ptAdh;
         ptAdh = A;
         while(ptAdh !=NULL){
@@ -446,11 +493,15 @@ void afficherAdherent(Adherent * A){ // afichages des adherants
         }
 }
 
-void Ajouter_Adherent(list_Adherents* list_adh){ // ajout d'un adherant a une liste 
+void afficherAdherent(Adherent A){ // afichages un adherent
+    printf("%d %s %s %s %s %d\n", A.don_adh.num_adh, A.don_adh.nom_adh, A.don_adh.prenom_adh, A.don_adh.email, A.don_adh.adresse, A.don_adh.emprunt);
+}
+
+void Ajouter_Adherent(list_Adherents* list_adh){ // ajout d'un Adherent a une liste 
         Adherent* ptAdh = *list_adh;
         if(ptAdh == NULL){
                 ptAdh = Malloc(Adherent); 
-                printf("entrez les donnees de la livre:\nnumero titre categorie nomAuteur prenomAuteur numAdherent\n");
+                printf("entrez les donnees de l'adherent:\nnumero nom prenom email address emprunt\n");
                 scanf("%d %s %s %s %s %d", &(ptAdh->don_adh.num_adh), ptAdh->don_adh.nom_adh, ptAdh->don_adh.prenom_adh, ptAdh->don_adh.email, ptAdh->don_adh.adresse, &(ptAdh->don_adh.emprunt));
                 *list_adh = ptAdh;
         }else{
@@ -459,17 +510,18 @@ void Ajouter_Adherent(list_Adherents* list_adh){ // ajout d'un adherant a une li
                 }
                 Adherent *prec = ptAdh;
                 ptAdh=Malloc(Adherent) ; 
-                printf("entrez les donnees de la livre:\nnumero titre categorie nomAuteur prenomAuteur numAdherent\n");
+                printf("entrez les donnees de l'adherent:\nnumero nom prenom email address emprunt\n");
                 scanf("%d %s %s %s %s %d",&(ptAdh->don_adh.num_adh), ptAdh->don_adh.nom_adh, ptAdh->don_adh.prenom_adh, ptAdh->don_adh.email, ptAdh->don_adh.adresse, &(ptAdh->don_adh.emprunt));
                 prec->suiv = ptAdh;
         }
 }
-Adherent* Rechercher_Adherent_num(list_Adherents list_adh,int numero){ // rechercher un adherant dans la liste
+
+Adherent* Rechercher_Adherent_num(list_Adherents list_adh,int numero){ // rechercher un Adherent dans la liste
         /*
-         * la recherche est de complexite O(n) ou n le nombres des adherants
+         * la recherche est de complexite O(n) ou n le nombres des Adherents
          */
         if(list_adh == NULL){
-                puts("liste vide");
+                strcpy(message_alert ,"liste des adherents est vide");
                 return NULL;
         }
         Adherent *ptAdh = list_adh;
@@ -479,17 +531,17 @@ Adherent* Rechercher_Adherent_num(list_Adherents list_adh,int numero){ // recher
                 }
                 ptAdh = ptAdh->suiv;
         }
-        printf("Adherent non trouv?e\n");
+        strcpy(message_alert,"Adherent non trouve\n");
         return NULL;
 }
 
 
-Adherent * Rechercher_Adherent_nom(list_Adherents list_adh,char nom[]){ // recherche par nom d'un adherant
+Adherent * Rechercher_Adherent_nom(list_Adherents list_adh, char nom[]){ // recherche par nom d'un Adherent
         /*
-         * la recherche est lineare on return la premier adherant trouve de meme nom 
+         * la recherche est lineare on return la premier Adherent trouve de meme nom 
          * */
         if(list_adh == NULL){
-                puts("liste vide");
+                strcpy(message_alert, "liste des adherents est vide");
                 return NULL;
         }
         Adherent *ptAdh = list_adh;
@@ -499,14 +551,14 @@ Adherent * Rechercher_Adherent_nom(list_Adherents list_adh,char nom[]){ // reche
                 }
                 ptAdh = ptAdh->suiv;
         }
-        printf("Adherent non trouv?e\n");
+       	strcpy(message_alert,"Adherent non trouve\n");
         return NULL;
 }
 
 
 
 
-void Modifier_Adherent(list_Adherents * list_adh,int numero){ // modifier l'adherant dans la liste 
+void Modifier_Adherent(list_Adherents * list_adh,int numero){ // modifier l'Adherent dans la liste 
         Adherent* ptAdh;
         if(ptAdh=Rechercher_Adherent_num(*list_adh,numero)){
                 puts("entrez les nouvelle donnees:");
@@ -517,9 +569,9 @@ void Modifier_Adherent(list_Adherents * list_adh,int numero){ // modifier l'adhe
 
 
 
-void Supprimer_Adherent(list_Adherents *list_adh, int numero){ // suppresion par numero d'adherant
+void Supprimer_Adherent(list_Adherents *list_adh, int numero){ // suppresion par numero d'Adherent
         if(*list_adh == NULL){
-                printf("liste vide\n");
+                strcpy(message_alert, "liste des adherents est vide");
                 return;
         }else{
                 if((*list_adh)->don_adh.num_adh == numero){
@@ -542,10 +594,10 @@ void Supprimer_Adherent(list_Adherents *list_adh, int numero){ // suppresion par
         }
 }
 
-void Sauvegarder_Adherents(char fichier[], list_Adherents list_adh){ // suavegarder l'adherant
+void Sauvegarder_Adherents(char fichier[], list_Adherents list_adh){ // suavegarder l'Adherent
         FILE* fadh = fopen(fichier, "w+");
         if(list_adh == NULL){
-                puts("liste vide\n");
+            	strcpy(message_alert, "liste des adherents est vide");
                 return;
         }
         Adherent *ptAdh = list_adh;
@@ -562,6 +614,10 @@ void Sauvegarder_Adherents(char fichier[], list_Adherents list_adh){ // suavegar
 //============================================ emprunts=============================================================
 
 void Afficher_livres_Empruntes(list_livres list_lv){
+	if(list_lv == NULL){
+		strcpy(message_alert,"liste des livres est vide\n");
+		return;
+	}
   Livre * ptr = list_lv;
   while(ptr->suiv != NULL) {
     if (ptr->don_lv.emprunteur != -1) {
@@ -573,27 +629,51 @@ void Afficher_livres_Empruntes(list_livres list_lv){
 }  
 
 void Emprunter(int numero_Adherent , int numero_livre ,list_livres * list_lv , list_Adherents *list_adh ) {
-  Livre* livre =  Rechercher_Livre_num(*list_lv,numero_livre);
-  Adherent* adh = Rechercher_Adherent_num(*list_adh,numero_Adherent);
+	if(*list_lv == NULL){
+		strcpy(message_alert,"liste des livres est vide\n");
+		return;
+	}
+	if(*list_adh == NULL){
+		strcpy(message_alert, "liste des adherents est vide\n");
+		return;
+	}
+	puts("dsffffffffffffffffffffffffffffffff");
+	Livre* livre =  Rechercher_Livre_num(*list_lv,numero_livre);
+	Adherent* adh = Rechercher_Adherent_num(*list_adh,numero_Adherent);
+	puts("dsffffffffffffffffffffffffffffffff");
+	printf("dn empr = %d\n", livre->don_lv.emprunteur);
         if (livre->don_lv.emprunteur != -1) {
-        printf("le livre n_%d est deja emprunte\n", numero_livre);
+        puts("If1");
+        sprintf(message_alert, "le livre n_%d est deja emprunte\n", numero_livre);
+        puts("If2");
         return;
         }else {
-    if (adh->don_adh.emprunt == 3) {
-                printf("le client n_%d a deja emprunte 3 livres\n", numero_Adherent);
-        return;
-    }
-    livre->don_lv.emprunteur = numero_Adherent;
-        adh->don_adh.emprunt += 1;
+        	puts("else1");
+    		if (adh->don_adh.emprunt == 3) {
+    			puts("else2");
+            	sprintf(message_alert, "le client n_%d a deja emprunte 3 livres\n", numero_Adherent);
+        		puts("else3");
+				return;
+    		}
+    		livre->don_lv.emprunteur = numero_Adherent;
+        	adh->don_adh.emprunt += 1;
         }
         return;
 }
 
 void Rendre_livre(list_livres *list_lv ,list_Adherents* list_adh ,int numero_lv){
-        Livre* ptLivre = Rechercher_Livre_num(*list_lv, numero_lv);
-        Adherent* adh = Rechercher_Adherent_num(*list_adh, ptLivre->don_lv.emprunteur);
-        adh->don_adh.emprunt -= 1;
-        ptLivre->don_lv.emprunteur = -1;
+	if(list_lv == NULL){
+		strcpy(message_alert,"liste des livres est vide\n");
+		return;
+	}
+	if(list_adh == NULL){
+		strcpy(message_alert,"liste des adherents est vide\n");
+		return;
+	}
+	Livre* ptLivre = Rechercher_Livre_num(*list_lv, numero_lv);
+	Adherent* adh = Rechercher_Adherent_num(*list_adh, ptLivre->don_lv.emprunteur);
+    adh->don_adh.emprunt -= 1;
+    ptLivre->don_lv.emprunteur = -1;
 }
 
 
@@ -601,7 +681,15 @@ void Afficher_Adherents_emprunteurs(list_livres list_lv, list_Adherents list_adh
         /**on crée une matrice d'indexes dans laquelle on vas enregistrer chaque emprunteur avec les numeros des livres
          * qu'il a emprunté et par la suite on vas traverser cette matrice en affichant chaque emprunteur avec les livres
          * qu'il a emprunté.*/
-        Livre* ptLivre = list_lv;
+	if(list_lv == NULL){
+		strcpy(message_alert,"liste des livres est vide\n");
+		return;
+	}
+	if(list_adh == NULL){
+		strcpy(message_alert,"liste des adherents est vide\n");
+		return;
+	}
+		Livre* ptLivre = list_lv;
         int **index;
         int i, j, taille=0; //taille actuelle de la matrice d'indexes
         while(ptLivre != NULL){ //pour chaque instance de livre
@@ -645,22 +733,21 @@ void Afficher_Adherents_emprunteurs(list_livres list_lv, list_Adherents list_adh
         };
         free(index);
 }
-void Menu(list_Adherents * list_adh,list_livres * list_lv) {
+void Menu(list_Adherents * list_adh, list_livres * list_lv) {
         char c;
         do {
                 clear() ;
                 printf("Bonjour !!\n");
                 printf("Choisissez entre : \n");
-                printf("1. Gestion adherant.\n");
+                printf("1. Gestion Adherent.\n");
                 printf("2. Gestion livres.\n");
                 printf("3. Gestion Emprunt.\n");
                 printf("q. Quitter.\n");
-                c = getchar();
-		getchar();
+            	c = getch();
                 //printf("%c" , c);
                 switch(c) {
                         case '1':
-                                Menu_Adherant(list_adh , list_lv);
+                                Menu_Adherent(list_adh , list_lv);
                                 break;
                         case '2': 
                                 Menu_Livres(list_adh , list_lv);
@@ -674,106 +761,100 @@ void Menu(list_Adherents * list_adh,list_livres * list_lv) {
                 }
         }while(1);
 }
-void Menu_Adherant(list_Adherents * list_adh,list_livres * list_lv) {
-        /*
-void Remplir_Adherent(char fichier[]); //
-list_Adherents Charger_Adherents(char fichier[]); //
-void afficherAdherent(Adherent * A); //
-void Ajouter_Adherent(list_Adherents* list_adh); //
-Adherent* Rechercher_Adherent_num(list_Adherents list_adh,int numero); //
-Adherent* Rechercher_Adherent_nom(list_Adherents list_adh,char nom[]);//
-void Modifier_Adherent(list_Adherents * list_adh,int numero); //
-void Sauvegarder_Adherents(char fichier[], list_Adherents list_adh); //
-void Supprimer_Adherent(list_Adherents *list_adh, int numero); //
-        */
-        char c; 
+void Menu_Adherent(list_Adherents * list_adh,list_livres * list_lv) {
+        char c;
+        int z=0;
         do {
-                clear() ;
+                clear();
+                if(strcmp(message_alert,"")){
+        			printf("message: %s\n", message_alert);
+        			strcpy(message_alert, "");
+				}
+				printf("___________________________________________\n\n");
                 printf("Bonjour !!\n");
                 printf("Choisissez entre : \n");
-                printf("1. Remplir adherant.\n");
-                printf("2. Charger adherant.\n");
-                printf("3. Ajouter Adherant.\n");
-                printf("4. Rechercher Adherant.\n");
-                printf("5. Modifier Adherant.\n");
-                printf("6. Sauvegarder Adherant.\n");
-                printf("7. Supprimer Adherant.\n");
+                printf("1. Remplir Liste Adherent\n");
+                printf("2. Charger Liste Adherent\n");
+                printf("3. Ajouter Adherent\n");
+                printf("4. Rechercher Adherent\n");
+                printf("5. Modifier Adherent\n");
+                printf("6. Supprimer Adherent\n");
+                printf("7. Sauvegarder Liste Adherent\n");
                 printf("q. Quitter.\n");
                 printf("r. Retourner.\n");
-                c = getchar();
-		getchar();
-                //printf("%c" , c);
+                c = getch();
                 char fichier[20];
                 char nom[14];
-                int  numero; 
+                int  numero;
+                
                 switch(c) {
-                        case '1':// Remplir Adherants
+                        case '1':// Remplir Adherents
                                 printf("Entrer le nom du fichier: ");
                                 scanf("%s" , fichier);
                                 Remplir_Adherent(fichier);
                                 break;
-                        case '2':// Charger Adherants
+                        case '2':// Charger Adherents
+                                printf("Entrer le nom du fichier: ");
+                                scanf("%s" , fichier);
                                 *list_adh = Charger_Adherents(fichier);
                                 break;
-                        case '3':// ajouter du Adherant ;
+                        case '3':// ajouter du Adherent ;
                                 Ajouter_Adherent(list_adh);
                                 break;
-                        case '4':// rechercher Adherant ;
-                                Rechercher_Adherent_nom(*list_adh ,nom);
+                        case '4':// rechercher Adherent ;
+                        		puts("entrez le nom d'adherent");
+                        		scanf("%s",nom);
+                        		while(nom == "\n")scanf("%s",nom);
+								Adherent* adh = Rechercher_Adherent_nom(*list_adh ,nom);
+								if(adh != NULL)
+                                	afficherAdherent(*adh);
+								puts("cliquer un botton pour continuer:");
+								getch();
                                 break;
                         case '5':// Supprimer
-                                printf("Enter le numero de l'adherant a modifier: ");
+                                printf("Enter le numero de l'Adherent a modifier: ");
                                 scanf("%d" , &numero);
                                 Modifier_Adherent(list_adh , numero);
                                 break;
-                        case '6':// Sauvegarder
-                                printf("Entrer le nom du fichier ou a sauvegarder: ");
-                                printf("%s" , fichier);
-                                Sauvegarder_Adherents(fichier , *list_adh);
-                                break;
-                        case '7':// Supprimer Adherant
+                        case '6':// Supprimer Adherent
                                 printf("Entrer le numero: "); 
                                 scanf("%d" , &numero);
                                 Supprimer_Adherent(list_adh ,numero );
                                 break;
+                        case '7':// Sauvegarder
+                                printf("Entrer le nom du fichier de souvegarde: ");
+                                scanf("%s" , fichier);
+                                Sauvegarder_Adherents(fichier , *list_adh);
+                                break;
                         case 'q':// quitter
                                 printf("Au revoir");
                                 exit(0);
-                                break;         
-
+                                break;
                 }
         }while(c!='r');
 }
 void Menu_Livres(list_Adherents * list_adh,list_livres * list_lv) {
-        /*
-void Remplir_Livres(char fichier[]);//done
-list_livres Charger_Livres(char fichier[]); //done
-void Ajouter_Livre(list_livres* list_lv); //done
-Livre* Rechercher_Livre_num(list_livres list_lv,int numero);//done
-void Modifier_Livre(list_livres* list_lv,int numero);//done
-void Supprimer_Livre(list_livres* list_lv,int numero);//done
-Livre Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]);
-void Ordonner_Categorie(list_livres* list_lv);//done
-void Sauvegarder_Livres(char fichier[] , list_livres);//done
-void afficherListeLivres(Livre* L);//done
-        */
-        char c; 
+        char c;
         do {
-                clear() ;
+                clear();
+                if(strcmp(message_alert,"")){
+        			printf("message: %s\n", message_alert);
+        			strcpy(message_alert, "");
+				}
+				printf("___________________________________________\n\n");
                 printf("Bonjour !!\n");
-                printf("Choisissez entre : \n");
-                printf("1. Remplir livre.\n");
-                printf("2. Charger livre.\n");
-                printf("3. Ajouter livre.\n");
-                printf("4. Rechercher livre.\n");
-                printf("5. Modifier livre.\n");
-                printf("6. Sauvegarder livre.\n");
-                printf("7. Supprimer livre.\n");
-    		printf("8. Ordonner livre.\n");
-    		printf("q. Quitter.\n");
-		printf("r. Retourner.\n");
-                c = getchar();
-		getchar();
+                printf("Choisissez entre \n");
+                printf("1. Remplir liste livre\n");
+                printf("2. Charger liste livre\n");
+                printf("3. Ajouter livre\n");
+                printf("4. Rechercher livre\n");
+                printf("5. Modifier livre\n");
+                printf("6. Supprimer livre\n");
+    			printf("7. Ordonner livre\n");
+                printf("8. Sauvegarder liste livre.\n");
+    			printf("q. Quitter\n");
+				printf("r. Retourner\n");
+                c = getch();
                 //printf("%c" , c);
                 char fichier[20];
                 char nom[14];
@@ -786,38 +867,44 @@ void afficherListeLivres(Livre* L);//done
                                 Remplir_Livres(fichier);
                                 break;
                         case '2':// Charger Livre
-                                *list_adh = Charger_Livres(fichier);
+                        		printf("Entrer le nom du fichier: ");
+                                scanf("%s" , fichier);
+                                *list_lv = Charger_Livres(fichier);
                                 break;
                         case '3':// ajouter du Livre ;
                                 Ajouter_Livre(list_lv);
                                 break;
                         case '4':// rechercher Livre ;
-				printf("Entrer nom categorie: ") ;
-				scanf("%s %s" , nom , cat);
-                                Rechercher_Livre_cat(*list_lv ,cat , nom);
-                                break;
+								printf("Entrer: nom et categorie: ") ;
+								scanf("%s %s" , nom , cat);
+                                Livre *lv = Rechercher_Livre_cat(*list_lv ,cat , nom);
+                                if(lv != NULL)
+                                	afficherLivre(*lv);
+                                printf("cliquer un botton pour continuer:");
+								getch();
+								break;
                         case '5':// Modifier livre
-                                printf("Enter le numero de l'adherant a modifier: ");
+                                printf("Enter le numero de la livre a modifier: ");
                                 scanf("%d" , &numero);
-                                Modifier_Livre(list_lv , numero);
-                                break;
-                        case '6':// Sauvegarder
-                                printf("Entrer le nom du fichier ou a sauvegarder: ");
-                                printf("%s" , fichier);
-                                Sauvegarder_Livres(fichier , *list_lv);
-                                break;
-                        case '7':// Supprimer Livre
-                                printf("Entrer le numero: "); 
+                            	Modifier_Livre(list_lv , numero);
+                        		break;
+                        case '6':// Supprimer Livre
+                                printf("Entrer le numero: ");
                                 scanf("%d" , &numero);
                                 Supprimer_Livre(list_lv ,numero );
                                 break;
-			case '8': //Ordonner la liste des livre
-				Ordonner_Categorie(list_lv);
-				break;
+						case '7': //Ordonner la liste des livre
+								Ordonner_Categorie(list_lv);
+								break;
+                        case '8':// Sauvegarder
+                                printf("Entrer le nom du fichier ou a sauvegarder: ");
+                                scanf("%s" , fichier);
+                                Sauvegarder_Livres(fichier , *list_lv);
+                                break;
                         case 'q':// quitter
                                 printf("Au revoir");
                                 exit(0);
-                                break;         
+                                break;
 
                 }
         }while(c!='r');
@@ -825,31 +912,35 @@ void afficherListeLivres(Livre* L);//done
 void Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv) {
         char c; 
         do {
-                clear() ;
+                clear();
+                if(strcmp(message_alert,"")){
+        			printf("Alert: %s\n", message_alert);
+        			strcpy(message_alert, "");
+				}
+				printf("___________________________________________\n\n");
                 printf("Bonjour !!\n");
                 printf("Choisissez entre : \n");
                 printf("1. Emprunter.\n");
                 printf("2. Afficher livre emprunte.\n");
-                printf("3. Afficher adherants emprunteur.\n");
+                printf("3. Afficher Adherents emprunteur.\n");
                 printf("4. Rendre livre.\n");
-	        printf("q. Quitter.\n");
-		printf("r. Retourner.\n");
-                c = getchar();
-		getchar();
+	       		printf("q. Quitter.\n");
+				printf("r. Retourner.\n");
+                c = getch();
                 //printf("%c" , c);
                 char fichier[20];
                 char nom[14];
                 int  numero; 
                 switch(c) {
-                        case '1':// Remplir Adherants
-				printf("Entrer le numero de l'adherant et du livre:");
-				int numero_liv; 
-				scanf("%d %d" , &numero , &numero_liv);
-                                Emprunter(numero , numero_liv, list_lv , list_adh);
-                                break;
-			case '2':
-				Afficher_livres_Empruntes(*list_lv);
-                                break;
+                        case '1':// Remplir Adherents
+							printf("Entrer le numero de l'Adherent et du livre:");
+							int numero_liv;
+							scanf("%d %d" , &numero , &numero_liv);
+                            Emprunter(numero , numero_liv, list_lv , list_adh);
+                        	break;
+						case '2':
+							Afficher_livres_Empruntes(*list_lv);
+                            break;
                         case '3':
 				Afficher_Adherents_emprunteurs(*list_lv , *list_adh);
                                 break;
