@@ -408,7 +408,7 @@ Il s'agit de la recherche iterative du livre en utilisant son categorie et titre
 
 void Sauvegarder_Livres(char fichier[], list_livres list_lv){ 
 /*
-Fonction : Rechercher Livre par categorie
+Fonction : sauvegarder Livres
 
 Variables : 
 ---------
