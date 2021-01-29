@@ -19,7 +19,7 @@ struct donne_livre{
   char titre[30];
   char categorie[12];
   struct Auteur auteur;
-  int emprunteur; // a intialiser par -1
+  int emprunteur; 
 };
 
 typedef struct _livre {
@@ -33,93 +33,177 @@ typedef Livre * list_livres;
 
 char message_alert[255];
 
-void Remplir_Livres(char fichier[]){
-        /**remplir le fichier des livres manuellement */
-        FILE* fLivre = fopen(fichier, "a"); /*ajouter a la fin du fichier*/
-        if(fLivre == NULL) exit(0);
-        int numero = -1;
-        char titre[30];
-        char categorie[12];
-        char nom[14];
-        char prenom[14];
-                printf("entrez les donnees du livre:\n");
-                puts("cliquez ctrl+c pour sortir: ");
-				printf("numero titre categorie nomAuteur prenomAuteur\n");
-        do{
+void Remplir_Livres(char fichier[]){/*
+Fonction : Remplir livres
+
+Variables : 
+---------
+
+	- fichier : chaine de characteres representant le nom du fichier
+
+Fonctionnement :
+---------------
+
+Il s'agit de creer une liste des Livres a partir de donnes fournis dans la fichier 
+	- on definie les variable de donné liée a chaque livre 
+	- on boucle jusqu'a atteindre le fin du saisie (jusqua ce que numero = EOF(-1))
+	- on ferme le fichier 
+*/
+        FILE* fLivre = fopen(fichier, "a"); 								
+        int numero = -1;										        
+        char titre[30];										                 
+        char categorie[12];										        
+        char nom[14];										                
+        char prenom[14];										         
+        printf("---- Entrez les donnees du livre: ");
+        printf("		Cliquez ctrl+c pour sortir \n");
+	printf("numero | titre | categorie | nomAuteur | prenomAuteur \n");
+        do{													
                 numero = -1;
                 signal(2, Interruption);
-				scanf("%d %s %s %s %s", &numero, titre, categorie, nom, prenom);
+		scanf("%d %s %s %s %s", &numero, titre, categorie, nom, prenom);
                 if(numero != -1) fprintf(fLivre, "\n%d %s %s %s %s %d", numero, titre, categorie, nom, prenom, -1); //emprunteur initialise à -1
         }while(numero != -1);
         fclose(fLivre);
 }
 
-list_livres Charger_Livres(char fichier[]){
-        /**charger la liste des livres a partir d'un fichier*/
+list_livres Charger_Livres(char fichier[]){/*
+Fonction : Charger livres
+
+Variables : 
+---------
+
+	- fichier : chaine de characteres representant le nom du fichier
+
+Fonctionnement :
+---------------
+
+Il s'agit de creer une liste des Livres a partir de donnes fournis dans la fichier 
+	- on verfiie l'existance du fichier 
+	- initialisation du liste chainée de livres 
+	- on definie les variable de donné liée a chaque livre 
+	- on boucle jusqu'a atteindre le fin du fichier (jusqua ce que numero = EOF(-1))
+	- on ferme le fichier 
+*/
         FILE* fLivres = fopen(fichier, "r");
         if(fLivres == NULL){
         	strcpy(message_alert, "fichier livres non trouve");
         	return;
 		}
-        list_livres lvr = NULL; //poiteur sur la debut de la liste
+        list_livres livre = NULL; 
         Livre* prec = NULL;
         rewind(fLivres); //positionner le pointeur du fichier au debut
-        while(!feof(fLivres)){ //tant que on est pas arrivé a la fin du fichier
+        while(!feof(fLivres)){ 
                 Livre *ptLivre = (Livre*)malloc(sizeof(Livre));
                 fscanf(fLivres, "%d %s %s %s %s %d", &(ptLivre->don_lv.num_lv), ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut, &(ptLivre->don_lv.emprunteur));
                 ptLivre->suiv = NULL;
-                if(prec != NULL) prec->suiv = ptLivre; //prec doit etre non null pour que prec->next existe
+                if(prec != NULL) prec->suiv = ptLivre; 
                 prec = ptLivre;
-                if(lvr == NULL) lvr  = ptLivre; //si lvr est null, ont est entrain de charger le premier livre
+                if(livre == NULL) livre  = ptLivre; // la list point sur la premiere case memoire du ptLivre  
         }
         fclose(fLivres);
         strcpy(message_alert, "liste chargee");
-        return lvr;
+        return livre;
 }
 
-void afficherListeLivres(Livre* L){ //afficher une liste des livres ligne par ligne
+void afficherListeLivres(Livre* List){ 
+/*
+Fonction : Afficher Liste Livres
+
+Variables : 
+---------
+
+	- L : liste chainé des livres 
+
+Fonctionnement :
+---------------
+
+Il s'agit d'afficher la liste des livres
+*/
 		Livre *ptLivre;
-		ptLivre = L;
+		ptLivre = List;
         while(ptLivre !=NULL){
                 printf("%d %s %s %s %s %d\n", ptLivre->don_lv.num_lv, ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut, ptLivre->don_lv.emprunteur);
                 ptLivre = ptLivre->suiv;
         }
 }
 
-void afficherLivre(Livre L){ //afficher une liste des livres ligne par ligne
+void afficherLivre(Livre L){ 
+/*
+Fonction : Afficher Livre
+
+Variables : 
+---------
+
+	- L : un livre 
+
+Fonctionnement :
+---------------
+
+Il s'agit d'afficher un livre pointée par le variable L
+*/
     printf("%d %s %s %s %s %d\n", L.don_lv.num_lv, L.don_lv.titre, L.don_lv.categorie, L.don_lv.auteur.nom_aut, L.don_lv.auteur.prenom_aut, L.don_lv.emprunteur);
 }
 
 void Ajouter_Livre(list_livres* list_lv){
-        /**lit et ajoute une instance de livre dans la liste des livres*/
+/*
+Fonction : Ajouter Livre
+
+Variables : 
+---------
+
+	- list_lv : pointeur sur une list chainée de livres
+
+Fonctionnement :
+---------------
+
+Il s'agit de la lecture d'un livre a partir de l'enrtée et ajouter a la liste 
+*/
         Livre *prec, *ptLivre = *list_lv;
-        if(ptLivre == NULL){ //si liste est vide
+        if(ptLivre == NULL){ 											//si liste est vide
                 ptLivre = (Livre*) malloc(sizeof(Livre));
                 printf("entrez les donnees du livre:\nnumero titre categorie nomAuteur prenomAuteur\n");
                 scanf("%d %s %s %s %s %d", &(ptLivre->don_lv.num_lv), ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut, &(ptLivre->don_lv.emprunteur));
                 *list_lv = ptLivre;
-        }else{ //ajout dans une liste non vide
+        }else{ 													//ajout dans une liste non vide
                 while(ptLivre->suiv != NULL){
                         ptLivre = ptLivre->suiv;
                 }
-                prec = ptLivre; //souvegarder la position precedente pour faire la liaison
+                prec = ptLivre; 										//souvegarder la position precedente pour faire la liaison
                 ptLivre = (Livre*) malloc(sizeof(Livre));
                 printf("entrez les donnees du livre:\nnumero titre categorie nomAuteur prenomAuteur\n");
                 scanf("%d %s %s %s %s", &(ptLivre->don_lv.num_lv), ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut);
                 ptLivre->don_lv.emprunteur = -1;
-				prec->suiv = ptLivre;
+		prec->suiv = ptLivre;
         }
 }
+Livre* Rechercher_Livre_num(list_livres list_lv,int numero){ 
+/*
+Fonction : Rechercher Livre par numero (index)
 
-Livre* Rechercher_Livre_num(list_livres list_lv,int numero){ //recherche un livre par numero
-        if(list_lv == NULL){
+Variables : 
+---------
+
+	- list_lv : list chainée de livres
+	- numero : le numero (index) du livre 
+
+Fonctionnement :
+---------------
+
+Il s'agit de la recherche iterative du livre en utilisant son numero : 
+	- on teste si la liste est vide 
+	- un pointeur (temporaire) de recherche
+	- une boucle qui s'arrete lorsque la liste est fini (on a attend le dernier element (de suivant = NULL))
+	- si le livre est trouve on sort de la fonction et retourne le livre 
+*/
+	if(list_lv == NULL){ 						 
                 strcpy(message_alert,"liste des livres est vide");
                 return NULL;
         }
         Livre *ptLivre = list_lv;
         while(ptLivre->suiv != NULL){
                 if(ptLivre->don_lv.num_lv == numero){
-                        return ptLivre; //dès qu'on a trouvé le livre on retourne
+                        return ptLivre;
                 }
                 ptLivre = ptLivre->suiv;
         }
@@ -127,23 +211,54 @@ Livre* Rechercher_Livre_num(list_livres list_lv,int numero){ //recherche un livr
         return NULL;
 }
 
-void Modifier_Livre(list_livres* list_lv, int numero){ //modifier les donnees d'un livre dans liste, recherche par nom
+void Modifier_Livre(list_livres* list_lv, int numero){ 
+/*
+Fonction : Modifier livre 
+
+Variables : 
+---------
+
+	- list_lv : list chainée de livres
+	- numero : le numero (index) du livre 
+
+Fonctionnement :
+---------------
+
+Il s'agit de modifier un livre au sein de la liste des livres  : 
+	- on teste si la liste est vide 
+	- on cherche le poiteur sur la donne de livre 
+	- on lit les nouvelles données 
+	- on change les donnes 
+*/
         Livre* ptLivre;
         if(*list_lv == NULL){
                 strcpy(message_alert,"liste des livres est vide");
                 return;
         }
         if(ptLivre = Rechercher_Livre_num(*list_lv, numero)){
-                puts("entrez les nouvelle donnees:\nnumero titre categorie nomAuteur prenomAuteur numAdherent\n");
+                puts("Entrez les nouvelle donnees:\n	numero | titre | categorie | nomAuteur | prenomAuteur | numAdherent\n");
                 scanf("%d %s %s %s %s %d", &(ptLivre->don_lv.num_lv), ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut, &(ptLivre->don_lv.emprunteur));
         }
 }
 
 void Supprimer_Livre(list_livres* list_lv, int numero){
-        /**supprimer un livre de la liste, recherche par nom
-         * si le livre à supprimer est au début de la liste on fait pointer la tete au enregistrement qui le suit et en efface le courant
-         * sinon, on fait pointer le precédent sur le suivant en guardant reference sur le courant, et on l'efface après (libèrer l'espace mem).
-         * */
+/*
+Fonction : Supprimer livre 
+
+Variables : 
+---------
+
+	- list_lv : list chainée de livres
+	- numero : le numero (index) du livre 
+
+Fonctionnement :
+---------------
+
+Il s'agit de supprimer un livre au sein de la liste des livres  : 
+	- on teste si la liste est vide 
+	- si le livre à supprimer est au début de la liste on fait pointer la tete au enregistrement qui le suit et en efface le courant
+        - sinon, on fait pointer le precédent sur le suivant en guardant reference sur le courant, et on l'efface après (libèrer l'espace mem).
+*/
         if(*list_lv == NULL){
                 strcpy(message_alert,"liste des livres est vide");
                 return;
@@ -169,6 +284,22 @@ void Supprimer_Livre(list_livres* list_lv, int numero){
 
 
 void Ordonner_Categorie(list_livres* list_lv){ //tri à bulles par catégorie de la liste des livres
+/*
+Fonction : Ordonner par Categorie 
+
+Variables : 
+---------
+
+	- list_lv : list chainée de livres
+
+Fonctionnement :
+---------------
+
+Il s'agit d' ordonner la liste des livres par categorie   : 
+	- on teste si la liste est vide 
+	- premier parcours pour faire un premier travers et calculer la taille de la liste.
+	- une deuxiemme parcours :  on fait les autres travers maintenant on décrementant le size pour ne pas faire des opérations sur les donnees déja ordonnees.
+*/
 		if(*list_lv == NULL){
 			strcpy(message_alert,"liste des livres est vide");
 			return;
@@ -176,34 +307,28 @@ void Ordonner_Categorie(list_livres* list_lv){ //tri à bulles par catégorie de
         Livre *prec, *courant= *list_lv;
         int size = 0;
         prec = courant;
-        /**cette premier boucle while est pour le premier travers et aussi pour calculer la taille de la liste pour l'utiliser après*/
-        while(courant->suiv != NULL){ //on traversant la liste des livres
-                if(strcmp(courant->don_lv.categorie, courant->suiv->don_lv.categorie) > 0){ //si il y'a mauvais positionnement
-                        if(prec == courant){//si on est dans le début de la liste, le precedent et suiv pointent initialement sur la meme position
+        while(courant->suiv != NULL){ 									//on traversant la liste des livres
+                if(strcmp(courant->don_lv.categorie, courant->suiv->don_lv.categorie) > 0){ 		//si il y'a mauvais positionnement
+                        if(prec == courant){								//si on est dans le début de la liste, le precedent et suiv pointent initialement sur la meme position
                                 prec = courant->suiv;
                                 courant->suiv = courant->suiv->suiv;
                                 prec->suiv = courant;
                                 *list_lv = prec;
                         }
-                        else{ //sinon, prec, et suiv pointent sur des positions consécutives
+                        else{ 										//sinon, prec, et suiv pointent sur des positions consécutives
                                 prec->suiv = courant->suiv;
                                 courant->suiv = courant->suiv->suiv;
                                 prec->suiv->suiv = courant;
                                 prec = prec->suiv;
                         }
                 }
-                else{ //après chaque etération on décale les deux pointeurs
+                else{ 											//après chaque itération on décale les deux pointeurs
                         prec = courant;
                         courant = courant->suiv;
                 }
-                size++;
-                //on incrément la taille
+                size++;											//on incrément la taille
         }
-        //afficherListeLivres(*list_lv);
         while(size > 0){
-                /**on fait les autres travers maintenant on décrementant le size
-                 * pour ne pas faire des opérations sur les donnees déja ordonnees
-                 * */
                 courant = *list_lv;
                 prec = courant;
                 int i=0;
@@ -230,14 +355,31 @@ void Ordonner_Categorie(list_livres* list_lv){ //tri à bulles par catégorie de
                 }
                 size--;
                 strcpy(message_alert,"liste des livres ordonee");
-                //afficherListeLivres(*list_lv);
-                //puts("______\n");
         }
 }
 
 
 Livre* Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]){ //on suppose que la liste des ordonnees est trié par categorie
-        if(list_lv == NULL){
+/*
+Fonction : Rechercher Livre par categorie
+
+Variables : 
+---------
+
+	- list_lv : list chainée de livres
+	- categorie : la categorie qu'on cherche
+	- titre : le nom du livre a chercher 
+
+Fonctionnement :
+---------------
+
+Il s'agit de la recherche iterative du livre en utilisant son numero : 
+	- on teste si la liste est vide 
+	- un pointeur (temporaire) de recherche
+	- une boucle qui s'arrete lorsque la liste est fini (on a attend le dernier element (de suivant = NULL))
+	- si le livre est trouve on sort de la fonction et retourne le livre 
+*/
+	if(list_lv == NULL){
                 strcpy(message_alert,"liste des livres est vide");
                 return NULL;
         }
