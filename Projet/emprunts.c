@@ -87,32 +87,32 @@ void Rendre_livre(list_livres *list_lv ,list_Adherents* list_adh ,int numero_lv)
 
 
 void Afficher_Adherents_emprunteurs(list_livres list_lv, list_Adherents list_adh){
-	/**on crÈe une matrice d'indexes dans laquelle on vas enregistrer chaque emprunteur avec les numeros des livres
-	 * qu'il a empruntÈ et par la suite on vas traverser cette matrice en affichant chaque emprunteur avec les livres
-	 * qu'il a empruntÈ.*/
+	/**on cr√©e une matrice d'indexes dans laquelle on vas enregistrer chaque emprunteur avec les numeros des livres
+	 * qu'il a emprunt√© et par la suite on vas traverser cette matrice en affichant chaque emprunteur avec les livres
+	 * qu'il a emprunt√©.*/
 	Livre* ptLivre = list_lv;
 	int **index;
 	int i, j, taille=0; //taille actuelle de la matrice d'indexes
 	while(ptLivre != NULL){ //pour chaque instance de livre
-		if(ptLivre->don_lv.emprunteur != -1){ //si le livre est empruntÈ
+		if(ptLivre->don_lv.emprunteur != -1){ //si le livre est emprunt√©
 			i=0;
 			while(i<taille){ //on traverse la matrice des indexes
 				if(ptLivre->don_lv.emprunteur == index[i][0]){ //si le numero d'emprunteur existe deja dans la matirice
 					j=1;
-					while(j<4 && index[i][j] != 0) j++; //on se deplace ‡ une case vide(initisÈ par 0 avec calloc)
+					while(j<4 && index[i][j] != 0) j++; //on se deplace √† une case vide(initis√© par 0 avec calloc)
 					index[i][j] = ptLivre->don_lv.num_lv;
 					break;
 				}
 				i++;
 			}
-			if(i==taille){ //si on est a une position vide (emprunteur pas encore ajoutÈ)
+			if(i==taille){ //si on est a une position vide (emprunteur pas encore ajout√©)
 				if(taille == 0) index = (int**)malloc((taille+1)*sizeof(int*)); //si le premier ligne a ajouter on fait malloc
 				else index = (int**)realloc(index, (taille+1)*sizeof(int*)); //sinon on fait realloc
 				index[i] = (int*)calloc(4, sizeof(int));
-				//on alloue 4 emplacement pour chaque emprunteur, 1 pour son numero et 3 pour les livres empruntÈs (max), calloc initiale a 0
+				//on alloue 4 emplacement pour chaque emprunteur, 1 pour son numero et 3 pour les livres emprunt√©s (max), calloc initiale a 0
 				index[i][0] = ptLivre->don_lv.emprunteur; //on assigne le numero d'emprunteur
-				index[i][1] = ptLivre->don_lv.num_lv; //on ajour le livre comme premier livre empuntÈ
-				taille++; //la taille de la matrice est augmentÈ par une ligne
+				index[i][1] = ptLivre->don_lv.num_lv; //on ajour le livre comme premier livre empunt√©
+				taille++; //la taille de la matrice est augment√© par une ligne
 			}
 		}
 		ptLivre = ptLivre->suiv; //livre suivant
