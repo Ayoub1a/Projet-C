@@ -44,7 +44,7 @@ Variables :
 Fonctionnement :
 ---------------
 
-Il s'agit de creer une liste des Livres a partir de donnes fournis dans la fichier 
+Il s'agit de creer une liste des Livres a partir de donnes fournis dans l'entree 
 	- on definie les variable de donné liée a chaque livre 
 	- on boucle jusqu'a atteindre le fin du saisie (jusqua ce que numero = EOF(-1))
 	- on ferme le fichier 
@@ -113,7 +113,7 @@ Fonction : Afficher Liste Livres
 Variables : 
 ---------
 
-	- L : liste chainé des livres 
+	- List : liste chainé des livres 
 
 Fonctionnement :
 ---------------
@@ -373,7 +373,7 @@ Variables :
 Fonctionnement :
 ---------------
 
-Il s'agit de la recherche iterative du livre en utilisant son numero : 
+Il s'agit de la recherche iterative du livre en utilisant son categorie et titre : 
 	- on teste si la liste est vide 
 	- un pointeur (temporaire) de recherche
 	- une boucle qui s'arrete lorsque la liste est fini (on a attend le dernier element (de suivant = NULL))
@@ -406,7 +406,22 @@ Il s'agit de la recherche iterative du livre en utilisant son numero :
         return NULL;
 }
 
-void Sauvegarder_Livres(char fichier[], list_livres list_lv){ //charger les donnees de la liste dans un fichier
+void Sauvegarder_Livres(char fichier[], list_livres list_lv){ 
+/*
+Fonction : Rechercher Livre par categorie
+
+Variables : 
+---------
+
+	- list_lv : list chainée de livres .
+	- fichier : le nom de fichier . 
+
+Fonctionnement :
+---------------
+
+Il s'agit de sauvegarder la liste des livres  : 
+	- on teste si la liste est vide 
+*/
         FILE* fLivre = fopen(fichier, "w+");
         if(list_lv == NULL){
                 strcpy(message_alert,"liste des livres est vide");
