@@ -92,7 +92,7 @@ Tant que l'utilisateur n'a pas tappe le lettre 'q' qui veux dire quitter .*/
 
 
 void Menu_Adherent(list_Adherents * list_adh,list_livres * list_lv) {/*
-Fonction : Menu
+Fonction : Menu Adherents
 
 Variables : 
 ----------
