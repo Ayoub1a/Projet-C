@@ -1,10 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <string.h>
-#include<signal.h>
+#include <stdio.h>    // bibliotheque d'interaction avec le sysytem entré/sortie
+#include <stdlib.h>   // bibliotheque de definition des fonctions standards (free , malloc , realloc ..)
+#include <strings.h>  // bibliotheque de manipulation de chaine de lettres
+#include <signal.h>   // detection des signal (Ctrl-C , Ctrl-Z ..)
 
-
+// des fonctions definis pour le systems d'exploitation linux/Unix/apple
 #define Malloc(type) (type *)malloc(sizeof(type))
 #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
 #define clear() system("clear");
@@ -13,45 +12,56 @@
 #define GRN  "\e[0;32m"
 #define CYN  "\e[0;36m"
 #define REDB "\e[41m"
-void color(char a[]) {
-        printf("%s" , a);
-}
+void color(char a[]) {printf("%s" , a);}
 #endif
-
+// des fonctions definis pour le systems d'exploitation linux/Unix/apple
 #if defined(_WIN32) || defined(_WIN64)
 #define clear() ;system("cls");
 #define RED  "color 1"
 #define GRN  "color 2"
 #define CYN  "color 3"
 #define REDB "color 5"
-
+void color(char a[]) {system(a);}
+#endif
+// inclusion des fichiers .h (headers)
 #include "adherents.h"
 #include "livres.h"
 #include "emrunts.h"
 
-void color(char a[]) {
-        system(a);
-}
-#endif
-
-
+// Prototypes des fonctions
 void            Menu(list_Adherents * list_adh,list_livres * list_lv);
 void            Menu_Adherent(list_Adherents * list_adh,list_livres * list_lv);
 void            Menu_Livres(list_Adherents * list_adh,list_livres * list_lv);
 void            Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv);
 
 void main(){
-	strcpy(message_alert, "");
-        list_livres ma_liste_lv = NULL;
+	strcpy(message_alert, "");                                                         // Message alert permet de tracer les erreur
+        list_livres ma_liste_lv = NULL;                                                    // Initiaisation des liste chaine
         list_Adherents ma_liste_adh = NULL;
-        ma_liste_lv = Charger_Livres("Livres.txt");
+        ma_liste_lv = Charger_Livres("Livres.txt");					   // Chargement des listes a partir des fichiers
         ma_liste_adh = Charger_Adherents("Adherents.txt");
         Menu(&ma_liste_adh , &ma_liste_lv);
 	return 0;
 }
 
 
-void Menu(list_Adherents * list_adh, list_livres * list_lv) {
+void Menu(list_Adherents * list_adh, list_livres * list_lv) {/*
+Fonction : Menu
+
+Variables :
+----------
+
+	- Liste_adherants : liste chaine des adherants
+	- Liste_Livres : liste chaine des livres
+
+Fonctionnment : 
+--------------
+
+Il affiche un menu : 
+	- Menu de gestion Adherants
+	- Menu de gestion Livres
+	- Menu de gestion d'Emprunt
+Tant que l'utilisateur n'a pas tappe le lettre 'q' qui veux dire quitter .*/
         char c;
         do {
                 clear() ;
@@ -81,7 +91,27 @@ void Menu(list_Adherents * list_adh, list_livres * list_lv) {
 }
 
 
-void Menu_Adherent(list_Adherents * list_adh,list_livres * list_lv) {
+void Menu_Adherent(list_Adherents * list_adh,list_livres * list_lv) {/*
+Fonction : Menu
+
+Variables : 
+----------
+	- Liste_adherants : liste chaine des adherants
+	- Liste_Livres : liste chaine des livres
+
+Fonctionnment : 
+--------------
+
+Il affiche un menu : 
+		Remplir Liste Adherent.
+                Charger Liste Adherent.
+                Ajouter Adherent.
+                Rechercher Adherent.
+                Modifier Adherent.
+                Supprimer Adherent.
+                Sauvegarder Liste Adherent.
+                Retourner.
+Tant que l'utilisateur n'a pas tappe le lettre 'q' qui veux dire quitter .*/
         char c;
         int z=0;
         do {
@@ -153,7 +183,28 @@ void Menu_Adherent(list_Adherents * list_adh,list_livres * list_lv) {
                 }
         }while(c!='r');
 }
-void Menu_Livres(list_Adherents * list_adh,list_livres * list_lv) {
+void Menu_Livres(list_Adherents * list_adh,list_livres * list_lv) {/*
+Fonction : Menu Livres
+
+Variables : 
+-----------
+	- Liste_adherants : liste chaine des adherants
+	- Liste_Livres : liste chaine des livres
+
+Fonctionnment : 
+---------------
+
+Il affiche un menu : 
+		Remplir Liste livre.
+                Charger Liste livre.
+                Ajouter livre.
+                Rechercher livre.
+                Modifier livre.
+                Supprimer livre.
+                Sauvegarder Liste livre.
+		Ordonner livre
+                Retourner.
+Tant que l'utilisateur n'a pas tappe le lettre 'q' qui veux dire quitter .*/
         char c;
         do {
                 clear();
@@ -170,10 +221,10 @@ void Menu_Livres(list_Adherents * list_adh,list_livres * list_lv) {
                 printf("4. Rechercher livre\n");
                 printf("5. Modifier livre\n");
                 printf("6. Supprimer livre\n");
-    			printf("7. Ordonner livre\n");
+    		printf("7. Ordonner livre\n");
                 printf("8. Sauvegarder liste livre.\n");
-    			printf("q. Quitter\n");
-				printf("r. Retourner\n");
+    		printf("q. Quitter\n");
+		printf("r. Retourner\n");
                 c = getch();
                 //printf("%c" , c);
                 char fichier[20];
@@ -228,7 +279,25 @@ void Menu_Livres(list_Adherents * list_adh,list_livres * list_lv) {
                 }
         }while(c!='r');
 }
-void Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv) {
+void Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv) {/*
+Fonction : Menu Emprunt
+
+Variables : 
+----------
+
+	- Liste_adherants : liste chaine des adherants
+	- Liste_Livres : liste chaine des livres
+
+Fonctionnment : 
+--------------
+
+Il affiche un menu : 
+		Emprunter.
+                Afficher livre emprunte.
+                Afficher Adherents emprunteur.
+		Rendre livre
+                Retourner.
+Tant que l'utilisateur n'a pas tappe le lettre 'q' qui veux dire quitter .*/
         char c;
         do {
                 clear();
