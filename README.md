@@ -91,4 +91,4 @@ void            Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv);
 ```
 ## Execution
 Afin d'executer ce programme dans votre terminal : 
-il suffit d'xecuter le fichier gestion_emprunt.exe
+il suffit d'executer le fichier gestion_emprunt.exe
