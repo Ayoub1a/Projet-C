@@ -106,7 +106,7 @@ gestion_emprunts.o: gestion_emprunts.c *.h
 Afin d'executer ce programme dans votre terminal : 
 ```bash
 git clone https://github.com/Ayoub-2/Projet-C.git
-cd Projet_c 
+cd Projet
 make 
 ./ouput
 ```
