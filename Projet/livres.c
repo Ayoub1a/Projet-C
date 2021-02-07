@@ -22,7 +22,7 @@ void Remplir_Livres(char fichier[]){
                 numero = -1;
                 signal(2, Interruption);
 				scanf("%d %s %s %s %s", &numero, titre, categorie, nom, prenom);
-                if(numero != -1) fprintf(fLivre, "\n%d %s %s %s %s %d", numero, titre, categorie, nom, prenom, -1); //emprunteur initialise à -1
+                if(numero != -1) fprintf(fLivre, "\n%d %s %s %s %s %d", numero, titre, categorie, nom, prenom, -1); //emprunteur initialise Ã  -1
         }while(numero != -1);
         fclose(fLivre);
 }
@@ -37,7 +37,7 @@ list_livres Charger_Livres(char fichier[]){
         list_livres lvr = NULL; //poiteur sur la debut de la liste
         Livre* prec = NULL;
         rewind(fLivres); //positionner le pointeur du fichier au debut
-        while(!feof(fLivres)){ //tant que on est pas arrivé a la fin du fichier
+        while(!feof(fLivres)){ //tant que on est pas arrivÃ© a la fin du fichier
                 Livre *ptLivre = (Livre*)malloc(sizeof(Livre));
                 fscanf(fLivres, "%d %s %s %s %s %d", &(ptLivre->don_lv.num_lv), ptLivre->don_lv.titre, ptLivre->don_lv.categorie, ptLivre->don_lv.auteur.nom_aut, ptLivre->don_lv.auteur.prenom_aut, &(ptLivre->don_lv.emprunteur));
                 ptLivre->suiv = NULL;
@@ -92,7 +92,7 @@ Livre* Rechercher_Livre_num(list_livres list_lv,int numero){ //recherche un livr
         Livre *ptLivre = list_lv;
         while(ptLivre->suiv != NULL){
                 if(ptLivre->don_lv.num_lv == numero){
-                        return ptLivre; //dès qu'on a trouvé le livre on retourne
+                        return ptLivre; //dÃ¨s qu'on a trouvÃ© le livre on retourne
                 }
                 ptLivre = ptLivre->suiv;
         }
@@ -114,8 +114,8 @@ void Modifier_Livre(list_livres* list_lv, int numero){ //modifier les donnees d'
 
 void Supprimer_Livre(list_livres* list_lv, int numero){
         /**supprimer un livre de la liste, recherche par nom
-         * si le livre à supprimer est au début de la liste on fait pointer la tete au enregistrement qui le suit et en efface le courant
-         * sinon, on fait pointer le precédent sur le suivant en guardant reference sur le courant, et on l'efface après (libèrer l'espace mem).
+         * si le livre Ã  supprimer est au dÃ©but de la liste on fait pointer la tete au enregistrement qui le suit et en efface le courant
+         * sinon, on fait pointer le precÃ©dent sur le suivant en guardant reference sur le courant, et on l'efface aprÃ¨s (libÃ¨rer l'espace mem).
          * */
         if(*list_lv == NULL){
                 strcpy(message_alert,"liste des livres est vide");
@@ -141,7 +141,7 @@ void Supprimer_Livre(list_livres* list_lv, int numero){
 }
 
 
-void Ordonner_Categorie(list_livres* list_lv){ //tri à bulles par catégorie de la liste des livres
+void Ordonner_Categorie(list_livres* list_lv){ //tri Ã  bulles par catÃ©gorie de la liste des livres
 		if(*list_lv == NULL){
 			strcpy(message_alert,"liste des livres est vide");
 			return;
@@ -149,33 +149,33 @@ void Ordonner_Categorie(list_livres* list_lv){ //tri à bulles par catégorie de l
         Livre *prec, *courant= *list_lv;
         int size = 0;
         prec = courant;
-        /**cette premier boucle while est pour le premier travers et aussi pour calculer la taille de la liste pour l'utiliser après*/
+        /**cette premier boucle while est pour le premier travers et aussi pour calculer la taille de la liste pour l'utiliser aprÃ¨s*/
         while(courant->suiv != NULL){ //on traversant la liste des livres
                 if(strcmp(courant->don_lv.categorie, courant->suiv->don_lv.categorie) > 0){ //si il y'a mauvais positionnement
-                        if(prec == courant){//si on est dans le début de la liste, le precedent et suiv pointent initialement sur la meme position
+                        if(prec == courant){//si on est dans le dÃ©but de la liste, le precedent et suiv pointent initialement sur la meme position
                                 prec = courant->suiv;
                                 courant->suiv = courant->suiv->suiv;
                                 prec->suiv = courant;
                                 *list_lv = prec;
                         }
-                        else{ //sinon, prec, et suiv pointent sur des positions consécutives
+                        else{ //sinon, prec, et suiv pointent sur des positions consÃ©cutives
                                 prec->suiv = courant->suiv;
                                 courant->suiv = courant->suiv->suiv;
                                 prec->suiv->suiv = courant;
                                 prec = prec->suiv;
                         }
                 }
-                else{ //après chaque etération on décale les deux pointeurs
+                else{ //aprÃ¨s chaque etÃ©ration on dÃ©cale les deux pointeurs
                         prec = courant;
                         courant = courant->suiv;
                 }
                 size++;
-                //on incrément la taille
+                //on incrÃ©ment la taille
         }
         //afficherListeLivres(*list_lv);
         while(size > 0){
-                /**on fait les autres travers maintenant on décrementant le size
-                 * pour ne pas faire des opérations sur les donnees déja ordonnees
+                /**on fait les autres travers maintenant on dÃ©crementant le size
+                 * pour ne pas faire des opÃ©rations sur les donnees dÃ©ja ordonnees
                  * */
                 courant = *list_lv;
                 prec = courant;
@@ -209,7 +209,7 @@ void Ordonner_Categorie(list_livres* list_lv){ //tri à bulles par catégorie de l
 }
 
 
-Livre* Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]){ //on suppose que la liste des ordonnees est trié par categorie
+Livre* Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]){ //on suppose que la liste des ordonnees est triÃ© par categorie
         if(list_lv == NULL){
                 strcpy(message_alert,"liste des livres est vide");
                 return NULL;
@@ -217,8 +217,8 @@ Livre* Rechercher_Livre_cat(list_livres list_lv,char categorie[],char titre[]){ 
         Livre* ptLivre = list_lv;
         while(ptLivre->suiv != NULL){
                 if(!strcmp(ptLivre->don_lv.categorie, categorie)){
-                        /**comme la liste est trié par catégorie, tout les livres de la meme categorie
-                         * sont dans des positions consécutives*/
+                        /**comme la liste est triÃ© par catÃ©gorie, tout les livres de la meme categorie
+                         * sont dans des positions consÃ©cutives*/
                         if(!strcmp(ptLivre->don_lv.titre, titre)){
                                 return ptLivre;
                         }else{
