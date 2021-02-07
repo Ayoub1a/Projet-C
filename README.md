@@ -1,8 +1,8 @@
 # Gestion d'une Bibliotheque version Linux/Macos/Unix
 ## Structures
-- Structure Adherent :
+- **Structure Adherent** :
 	Contient les donnes d'un aderents : index , nom , prenom ,email n adresse , emprunt (nombre des livres empruntés) .
-- Structure Livres : 
+- **Structure Livres** : 
 	Contient les donnes d'un livre : index , titre , autheur , emprunteur .
 ```c
 struct donne_Adherent {
@@ -43,10 +43,10 @@ typedef Livre * list_livres;
 ```
 ## Organisation
 l'orginsation du projets se fait sur 4 fichiers : 
-- gestion\_emprunt.c: il s'agit du programme principale liant les autres partie
-- emprunts.c: contient l'ensembles des fonction de manipulation des empunts ,a savoir : rendre , emprunter , Afficher liste emprunteur.
-- Adherents.c: contient l'ensemble des fonction de manipulation des adherents.
-- Livres.c:  contient l'ensemble des fonctions de manipulation des Livres.
+- **Gestion_emprunt.c**: il s'agit du programme principale liant les autres partie
+- **Emprunts.c**: contient l'ensembles des fonction de manipulation des empunts ,a savoir : rendre , emprunter , Afficher liste emprunteur.
+- **Adherents.c**: contient l'ensemble des fonction de manipulation des adherents.
+- **Livres.c**:  contient l'ensemble des fonctions de manipulation des Livres.
 ###Adherents
 ###Livres 
 ###Emprunts
