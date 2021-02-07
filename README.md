@@ -1,4 +1,4 @@
-# Gestion d'une Bibliotheque version Linux/Macos/Unix
+# Gestion d'une Bibliotheque version Windows 32/64 bits
 ## Structures:
 - **Structure Adherent** :
 	Contient les donnes d'un aderents : index , nom , prenom ,email n adresse , emprunt (nombre des livres empruntés) .
