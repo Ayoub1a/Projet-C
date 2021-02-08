@@ -26,16 +26,21 @@ void color(char a[]) {
 #define GRN  "color 2"
 #define CYN  "color 3"
 #define REDB "color 5"
+void color(char a[]) {
+        system(a);
+}  
+#endif
+void viderBuffer(){
+	int c = 0;
+	while (c != '\n' && c != EOF){
+		c = getchar();
+	}
+}
 
 #include "adherents.h"
 #include "livres.h"
 #include "emprunts.h"
 #include "structures.h"
-
-void color(char a[]) {
-        system(a);
-}
-#endif
 char message_alert[255];
 
 
@@ -75,7 +80,7 @@ void Menu(list_Adherents * list_adh, list_livres * list_lv) {
                 printf("|\tq. Quitter.\n");
                 printf("|\n|\n|\n|\n|\n|\n");
                 printf("___________________________________________________\n\n");
-            	c = getchar();getchar();
+            	c = getchar();viderBuffer();
                 //printf("%c" , c);
                 switch(c) {
                         case '1':
@@ -118,7 +123,7 @@ void Menu_Adherent(list_Adherents * list_adh,list_livres * list_lv) {
                 printf("|\tr. Retourner\n");
                 printf("|\n");
                 printf("___________________________________________________\n\n");
-                c = getchar();getchar();
+                c = getchar();viderBuffer();
                 char fichier[20];
                 char nom[14];
                 int  numero;
@@ -192,7 +197,7 @@ void Menu_Livres(list_Adherents * list_adh,list_livres * list_lv) {
     			printf("|\tq. Quitter\n");
 				printf("|\tr. Retourner\n");
 				printf("___________________________________________________\n\n");
-                c = getchar();getchar();
+                c = getchar();viderBuffer();
                 //printf("%c" , c);
                 char fichier[20];
                 char nom[14];
@@ -219,7 +224,7 @@ void Menu_Livres(list_Adherents * list_adh,list_livres * list_lv) {
                         if(lv != NULL)
                         	afficherLivre(*lv);
                         printf("cliquer un boutton pour continuer:");
-						getchar();getchar();
+						getchar();viderBuffer();
 						break;
                     case '5':// Modifier livre
                         printf("Enter le numero de la livre a modifier: ");
@@ -267,7 +272,7 @@ void Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv) {
 				printf("|\n|\n|\n|\n");
 				printf("___________________________________________________\n\n");
 
-                c = getchar();getchar();
+                c = getchar();viderBuffer();
                 //printf("%c" , c);
                 char fichier[20];
                 char nom[14];
@@ -282,12 +287,12 @@ void Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv) {
 					case '2':
 						Afficher_livres_Empruntes(*list_lv);
 						puts("cliquer un boutton pour continuer:");
-						getchar();getchar();
+						getchar();viderBuffer();
                         break;
                     case '3':
 						Afficher_Adherents_emprunteurs(*list_lv , *list_adh);
 						puts("cliquer un boutton pour continuer:");
-						getchar();getchar();
+						getchar();viderBuffer();
                         break;
                     case '4':
 						printf("Entrer numero du livre: ");
