@@ -90,5 +90,8 @@ void            Menu_Livres(list_Adherents * list_adh,list_livres * list_lv);
 void            Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv);
 ```
 ## Execution
-Afin d'executer ce programme dans votre terminal : 
-il suffit d'executer le fichier gestion_emprunt.exe
+Afin d'executer ce programme dans votre cmd : 
+```powershell
+cd Projet
+gcc *.c *.h -o output.exe && output.exe
+```
