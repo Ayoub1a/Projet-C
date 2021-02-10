@@ -92,6 +92,6 @@ void            Menu_Emprunt(list_Adherents * list_adh,list_livres * list_lv);
 ## Execution
 Afin d'executer ce programme dans votre cmd : 
 ```powershell
-cd Programme
+cd Projet-C/Programme
 gcc *.c *.h -o output.exe && output.exe
 ```
